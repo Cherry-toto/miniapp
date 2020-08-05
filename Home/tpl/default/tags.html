@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<meta name="applicable-device" content="pc,mobile">
+<title>聚合标签 - {$webconf['web_name']}</title>
+<meta name="keywords" content="{$webconf['web_keyword']}" />
+<meta name="description" content="{$webconf['web_desc']}" />
+
+{include="style"}
+</head>
+<body>
+{include="header"}
+<nav class="breadcrumb container">当前位置： 聚合标签 </nav>
+<div id="content" class="content container clearfix">
+  <div id="mainbox" class="article-box fl mb">
+    <article class="art-main sb br mb">
+      <div class="art-head mb">
+        <h1 class="art-title">聚合标签</h1>
+      </div>
+        <div class="art-content">
+		{foreach $lists as $v}
+		<a class="tags" href="{fun U('tags/index',['tagname'=>$v['keywords']])}">{$v['keywords']}</a>
+		{/foreach}
+		
+		</div>
+    </article>
+  </div>
+{include="right"}
+</div>
+{include="footer"}
+</body>
+</html>

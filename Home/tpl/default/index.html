@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<meta name="applicable-device" content="pc,mobile">
+<title>{$webconf['web_name']}</title>
+<meta name="keywords" content="{$webconf['web_keyword']}" />
+<meta name="description" content="{$webconf['web_desc']}" />
+
+{include="style"}
+</head>
+<body>
+{include="header"}
+<p class="index-breadcrumb"></p>
+<div id="content" class="content container"> 
+  <!-- 广告位AD1  -->
+  <div class="clearfix">
+    <div id="mainbox" class="fl">
+      <div class="swiper-container br">
+        <ul class="swiper-wrapper">
+		{loop table="collect" tid="1" isshow="1" as="v"}
+          <li class="swiper-slide"> <a class="link" href="{$v['url']}" title="{$v['title']}">
+            <p class="p ellipsis">{$v['title']}</p>
+            <img src="{$v['litpic']}" alt="{$v['title']}"/></a> </li>
+		{/loop}	
+
+        </ul>
+        <p class="swiper-pagination"></p>
+        <i class="hidden-sm-md-lg swiper-button-next iconfont icon-right"></i> <i class="hidden-sm-md-lg swiper-button-prev iconfont icon-left"></i> </div>
+      <!-- 推荐模块A  -->
+      <div class="recommend-a sb br mb">
+        <p class="c-title"><span>主题模板</span> <a class="more" href="{$classtypedata[2]['url']}" title="{$classtypedata[2]['classname']}"> <i class="iconfont icon-right"></i></a></p>
+        <div class="wrap clearfix"> 
+		{loop table="article" tid="2" isall="1" isshow="1" limit="6" orderby="istop desc,istuijian desc,ishot desc,orders desc,addtime desc" as="v"}
+		<article class="item fl"><a class="thumbnail" href="{$v['url']}" title="{$v['title']}"> <img class="img-cover br" src="{$v['litpic']}" alt="{$v['title']}" title="{$v['title']}"> </a>
+			{if($v['istuijian']==1)}<a class="category brightness transition br" href="{$v['url']}" title="{$v['title']}">官方推荐</a>{/if}
+            <h2 class="title multi-ellipsis"><a href="{$v['url']}" title="{$v['title']}">{fun newstr($v['title'],30)}</a></h2>
+            <div class="num clearfix"> <span class="view ellipsis fl"><i class="iconfont icon-view"></i>{$v['hits']}</span> <span class="hidden-sm-md-lg comment ellipsis fl"><i class="iconfont icon-comment"></i>{$v['comment_num']}</span>
+              <time class=" time ellipsis fr" >
+             {fun date('Y-m-d',$v['url'])}
+              </time>
+            </div>
+          </article>
+		  {/loop}
+
+ </div>
+      </div>
+      <!-- 推荐模块B  -->
+      <div class="recommend-b sb br mb ">
+        <p class="c-title"><span>建站技术</span><a class="more" href="{$classtypedata[1]['url']}" title="{$classtypedata[1]['classname']}"> <i class="iconfont icon-right"></i></a></p>
+        <div class="wrap clearfix">
+		{loop table="article" tid="1" isall="1" isshow="1" limit="6" orderby="istop desc,istuijian desc,ishot desc,orders desc,addtime desc" as="v"}
+		<article class="item fl">
+            <div class="clearfix">
+              <div class="title-wrap clearfix"> 
+			  <a class="category transition ellipsis br fl" href="{$classtypedata[$v['tid']]['url']}" target="_blank">{$classtypedata[$v['tid']]['classname']}</a>
+                <h2 class="title ellipsis fl"> <a href="{$v['url']}" title="{$v['title']}">{fun newstr($v['title'],30)}</a> </h2>
+              </div>
+              <a class="thumbnail fl" href="{$v['url']}" title="{$v['title']}"> <img class="img-cover br" src="{$v['litpic']}" alt="{$v['title']}" title="{$v['title']}"> </a>
+              <div class="fr-wrap">
+                <p class="intro br clearfix">{fun newstr($v['description'],70)}</p>
+              </div>
+            </div>
+          </article>
+		{/loop}
+
+ </div>
+      </div>
+      <!-- 推荐模块C  --> 
+      <!-- 最新文章 -->
+      <div class="new-post"> 
+        <!-- <p class="c-title"><span>最新文章</span></p> -->
+		{loop table="article" orderby="addtime desc" isshow="1" limit="6" as="v"}
+        <article class="article-list br mb sb clearfix">
+          <figure class="figure fl"> <a class="thumbnail" href="{$v['url']}" title="{$v['title']}"> <img class="img-cover br" src="{$v['litpic']}" alt="{$v['title']}"> </a> </figure>
+          <div class="content">
+            <h2 class="title ellipsis m-multi-ellipsis"><a href="{$v['url']}" title="{$v['title']}">{fun newstr($v['title'],40)}</a></h2>
+            <p class="intro hidden-sm"> {fun newstr($v['description'],200)}</p>
+            <p class="data clearfix"> <!--<span class="hidden-sm-md-lg author fl"><i class="iconfont icon-user">未知</i></span>-->
+              <time class="time fl" >
+              <i class="iconfont icon-time"></i>{fun date('Y-m-d',$v['addtime'])}
+              </time>
+              <span class="view fl"><i class="iconfont icon-view"></i>{$v['hits']}</span> <span class="hidden-sm-md-lg comment ellipsis fl"><i class="iconfont icon-comment"></i>{$v['comment_num']} 评论</span><span class="hidden-sm-md-lg tag ellipsis fr"> <i class="iconfont icon-tag"></i> </span> </p>
+          </div>
+        </article>
+		{/loop}
+
+      </div>
+      <!-- 双栏文章 --> 
+    </div>
+{include="right"}
+  </div>
+  <!-- 通栏文章 --> 
+  <!-- 多图模块 -->
+  <div class="img-post sb br mb">
+    <p class="c-title mb"> <span>小程序</span> <a class="more" href="{$classtypedata[3]['url']}" title="{$classtypedata[3]['classname']}"> <i class="iconfont icon-right"></i></a> </p>
+    <div class="clearfix">
+	{loop table="article" tid="3" orderby="istuijian desc,orders desc,addtime desc" isall="1" isshow="1" limit="6" as="v"}
+       <article {if($v_n==1)}class="left fl"{else if($v_n==2 || $v_n==3)}class="top fl"{else}class="bottom fl"{/if}   > 
+	   <a class="a" href="{$v['url']}" title="{$v['title']}"> <img class="img img-cover br" src="{$v['litpic']}" alt="{$v['title']}">
+        <h2 class="title ellipsis m-multi-ellipsis">{$v['title']}</h2>
+        <i class="mask br"></i> </a> </article>
+	{/loop}
+
+    
+
+    </div>
+  </div>
+  <!-- 三栏文章 -->
+  <div class="text-post-wrap clearfix"> </div>
+  <!-- 友情链接 -->
+  <div class="flink container sb br mb">
+    <p class="c-title mb">友情链接<span class="rule"></span></p>
+    <ul id="flink" class="f-list clearfix">
+	{loop table="links" tid="1" isshow="1" as="v"}
+      <li><a href="{$v['url']}" target='_blank'>{$v['title']}</a> </li>
+	{/loop}  
+	 
+    </ul>
+  </div>
+</div>
+{include="footer"}
+</body>
+</html>

@@ -1,0 +1,51 @@
+    <aside id="sidebar" class="hidden-sm-md-lg fr">
+      <div class="theiaStickySidebar">
+        <section id="aside_about" class="widget widget_aside_about sb br mb"> <img class="bg" src="{$webconf['homeback']}"/>
+          <div class="avatar"><img class="img" src="{$webconf['homelogo']}"/></div>
+          <div class="wrap pd">
+            <p class="title">{$webconf['web_name']}</p>
+            <p class="info">{$webconf['homedes']}</p>
+            <ul class="ul clearfix">
+              <li class="li fl"><span class="num">{fun viewuser()}</span><small>访客人数</small></li>
+              <i class="line iconfont icon-line"></i>
+              <li class="li fl"><span class="num">{fun M('article')->getCount(['isshow'=>1])}</span><small>文章数</small></li>
+            </ul> 
+          </div>
+        </section>
+        <section id="aside_hot" class="widget widget_aside_hot sb br mb">
+          <p class="c-title mb"><span class="name">热门文章</span></p>
+          <ul class="widget-content aside_hot">
+		    {loop table="article" orderby="hits desc" isshow="1" limit="10" as="v"}
+            <li class="clearfix">
+			<span class="list list-1">{$v_n}.</span><a href="{$v['url']}" title="{$v['title']}">{$v['title']}</a></li>
+			{/loop}
+
+
+          </ul>
+        </section>
+        <section id="aside_hot_comment" class="widget widget_aside_hot_comment sb br mb">
+          <p class="c-title mb"><span class="name">热评文章</span></p>
+          <ul class="widget-content aside_hot_comment">
+		    {loop table="article" isshow="1" orderby="comment_num desc" limit="5" as="v"}
+            <li class="list clearfix"><a href="{$v['url']}" title="{$v['title']}"><span class="img-wrap"><img src="{$v['litpic']}" alt="{$v['title']}" class="img-cover br random-img"></span>
+              <div class="new-text">
+                <p class="title">{fun newstr($v['title'],50)}</p>
+                <div class="info"><span class="time"><i class="iconfont icon-time"></i>{fun date('Y-m-d',$v['addtime'])}</span><span class="comment"><i class="iconfont icon-view"></i>{$v['hits']}</span></div>
+              </div>
+              </a></li>
+			{/loop}
+
+          </ul>
+        </section>
+        <section id="divTags" class="widget widget_tags sb br mb">
+          <p class="c-title mb"><span class="name">标签列表</span></p>
+          <ul class="widget-content divTags">
+            {loop table="tags" isshow="1" limit="50" as="v"}
+            <li><a href="{fun U('tags/index',['tagname'=>$v['keywords']])}">{$v['keywords']}({$v['number']})</a></li>
+            {/loop}
+         
+            
+          </ul>
+        </section>
+      </div>
+    </aside>

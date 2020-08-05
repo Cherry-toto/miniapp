@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<meta name="applicable-device" content="pc,mobile">
+<title>{$jz['seo_title']}-{$webconf['web_name']}</title>
+<meta name="keywords" content="{$jz['keywords']}" />
+<meta name="description" content="{$jz['description']}" />
+
+
+{include="style"}
+</head>
+<body>
+{include="header"}
+<nav class="breadcrumb container">当前位置： {$positions} >  > 文章正文 </nav>
+<div id="content" class="content container clearfix">
+  <div id="mainbox" class="article-box fl mb">
+    <article class="art-main sb br mb">
+      <div class="art-head mb">
+        <h1 class="art-title">{$jz['title']}</h1>
+        <div class="head-info"> <span class="author"><i class="iconfont icon-user"></i>{if($jz['member_id'])}{fun memberInfo($jz['member_id'],'username')} {else}{fun adminInfo($jz['userid'],'name')} {/if}</span>
+          <time class="time" > <i class="iconfont icon-time"></i>{fun date('Y-m-d H:i',$jz['addtime'])}</time>
+          <span class="view"><i class="iconfont icon-view"></i>{fun incrData("article",$jz["id"],"hits")}  ℃</span> <span class="comment"><i class="iconfont icon-comment"></i>{$jz['comment_num']} 条</span> </div>
+      </div>
+      <!-- 广告位AD4  -->
+      
+      <div class="art-content">
+            {if($jz['video'])}
+            <video width="800" height="500" controls>
+              <source src="{$jz['video']}" type="video/mp4">
+            您的浏览器不支持Video标签。
+            </video>
+            {/if}
+	  {$jz['body']}
+        <!--打赏-->
+        
+        <div class="art-copyright br mb">
+          <div><strong cclass="addr">本文地址：</strong> <a href="{$jz['url']}">{$jz['url']}</a></div>
+          <div><span class="copyright">版权声明：</span>本文发布于{$webconf['web_name']} 内容均来源于互联网 如有侵权联系删除</div>
+        </div>
+        <div class="social-widget mt clearfix"> 
+          <!--点赞-->
+           <div class="thumbs-up-widget fl">
+                <div id="suiranx_air_thumbs_id-89" onclick="likes({$jz['tid']},{$jz['id']})" class="thumbs-btn suiranx_air_thumbs"><i class="iconfont icon-thumb"></i>赞 <span>{fun jz_zan($jz['tid'],$jz['id'])}</span></div>            </div>
+                        <!--分享-->
+                <div class="share-widget fr">
+                <div class="social-share" data-sites="wechat,weibo, qq, qzone"></div>
+    		</div>
+    		      
+        </div>
+      </div>
+    </article>
+    <!-- 广告位AD5  -->
+    <div class="prev-next sb br mb clearfix">
+      <p class="post-prev fl ellipsis"> 上一篇：{if($aprev)}<a href='{$aprev['url']}'>{$aprev['title']}</a>  {else}没有了{/if}</p>
+      <p class="post-next fr ellipsis"> 下一篇：{if($anext)}<a href='{$anext['url']}'>{$anext['title']}</a>  {else}没有了{/if}  </p>
+    </div>
+    <!--相关文章优先选择同tag的文章，无tag则调用最新文章-->
+    <div class="related-art sb br mb">
+      <p class="c-title"><span class="name">相关文章</span></p>
+      <ul class="ul clearfix">
+	    {loop table="$jz['molds']" tid="$jz['tid']" isall="1" limit="5" isshow="1" as="v"}
+         <li class="related-item mt fl"> <a href="{$v['url']}" title="{$v['title']}"> <span class="span"> <img class="img br img-cover" src="{$v['litpic']}" alt="{$v['title']}"> </span>
+          <p class="title">{fun newstr($v['title'],30)}</p>
+          </a> </li>
+		{/loop}
+
+
+      </ul>
+    </div>
+     <div id="comment" class="post-comment clearfix sb br mt">
+      <p id="comments-title" class="c-title mb bn"><span>发表评论</span> <span class="comment-num"> （已有<span class="emphasize">{$jz['comment_num']}</span>条评论） </span></p>
+      <div class="compost">
+
+<link href="{$tpl}css/comments.css" rel="stylesheet" type="text/css" />
+<div id="comments" class="entry-comments">
+ 
+	<div id="respond" class="comment-respond">
+	<form id="commentform" action="{fun U('comment/index')}" method="post">
+	<input type="hidden" name="go" value="1" />
+	<input name="tid" value="{$type['id']}"  type="hidden" />
+	<input name="aid" value="{$jz['id']}" placeholder="文章ID"   type="hidden" />
+	<input name="zid" value="0" id="zid" placeholder="评论层ID"  type="hidden" />
+	<input name="pid" value="0" id="pid" placeholder="回复层ID"  type="hidden" />
+	<div class="comt-ctrl"><div class="comt-tips">
+	
+	</div></div>
+	<div class="comment-form" id="_ajax_feedback">
+		<div class="comment-form-comment">
+			<textarea {if(!$islogin)}disabled="disabled"{/if} placeholder="需要登录才能发表评论" id="commentx" name="body" class="ipt" rows="4"></textarea>
+		</div>
+		<div class="form-submit">
+			<div class="form-submit-text pull-left">
+			{if(!$islogin)}<a title="注册" href="{fun U('login/register')}">注册</a>&nbsp;&nbsp;<a title="登录" href="{fun U('login/index')}">登录</a>{/if}</div>
+			{if($islogin)}<input name="submit" type="submit" id="must-submit" class="submit" value="发表">{/if}
+		
+		</div>
+	</div>
+	</form>
+</div>
+
+
+
+</div>
+
+
+      </div>
+	  {if($jz['comment_num']==0)}
+       <div class="comment-list mt">
+        <p class="no-comment"><i class="iconfont icon-sofa"></i> 快来评论，快来抢沙发吧~</p>
+        <span id="AjaxCommentBegin"></span>
+        <div class="pagebar mb mt">
+          <div class="nav-links"> </div>
+        </div>
+        <span id="AjaxCommentEnd"></span> 
+		</div>
+	   {else}
+	   
+	   <div class="comment-list mt">
+	    		<p class="title">评论列表</p>
+{php $comment = show_comment($jz['tid'],$jz['id'])/}	
+{foreach $comment['data'] as $v}
+{if($v['level']==0)}			
+<label id="cmt{$v['id']}"></label>
+<div class="ul">
+<div class="li transition">
+	<img class="fl" src="{$tpl}images/{fun rand(1,10)}.png"><div class="clbody">
+		<div class="cinfo clearfix">
+			<a class="author" rel="nofollow"  id="comment_level_{$v['id']}" target="_blank">{$v['userinfo']['username']}</a>
+			<span class="reply-a fr transition">
+			<a rel="nofollow" href="#comments-title" onclick="comment({$v['id']},{$v['id']})" >@回复</a></span>
+		</div>
+		<span class="c-time">{fun date('Y-m-d H:i:s',$v['addtime'])}</span>
+		<p class="p">{$v['body']}</p>
+	</div>
+	<div class="clear"></div>
+</div>
+{if($v['haschild'])}
+{foreach $comment['data'] as $vv}
+{if($vv['zid']==$v['id'])}
+<label id="cmt{$v['id']}"></label>
+<div class="ul">
+<div class="li transition">
+	<img class="fl" src="{$tpl}images/{fun rand(1,10)}.png">	<div class="clbody">
+		<div class="cinfo clearfix">
+			<a class="author" rel="nofollow"  id="comment_level_{$vv['id']}" target="_blank">{$vv['userinfo']['username']}</a>
+			<span class="reply-a fr transition">
+			<a rel="nofollow" href="#comments-title" onclick="comment({$v['id']},{$vv['id']})" >@回复</a></span>
+		</div>
+		<span class="c-time">{fun date('Y-m-d H:i:s',$vv['addtime'])}</span>
+		<p class="p">{$vv['body']}</p>
+	</div>
+	<div class="clear"></div>
+</div></div>
+{/if}
+{/foreach}		
+{/if}	
+
+</div>		
+{/if}
+{/foreach}					
+			
+<div class="pagebar mb mt">
+<div class="nav-links">
+</div>
+</div>
+		
+	</div>
+	   
+{/if}
+    </div> 
+  </div>
+  {include="right"}
+</div>
+{include="footer"}
+
+</body>
+</html>

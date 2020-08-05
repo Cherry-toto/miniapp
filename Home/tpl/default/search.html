@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<meta name="applicable-device" content="pc,mobile">
+<title>搜索 “{$word}” - {$webconf['web_name']}</title>
+<meta name="keywords" content="{$webconf['web_keyword']}" />
+<meta name="description" content="{$webconf['web_desc']}" />
+{include="style"}
+</head>
+<body>
+{include="header"}
+<nav class="breadcrumb container">当前位置：  {$positions}   </nav>
+<div id="content" class="content container clearfix">
+  <section id="mainbox" class="fl br mb"> 
+    <!-- 广告位AD6  -->
+    <div class="new-post">
+	{if($lists)}
+	{foreach $lists as $v}
+      <article class="article-list br mb sb clearfix">
+        <figure class="figure fl"> <a class="thumbnail" href="{$v['url']}" > <img class="img-cover br" src="{$v['litpic']}" > </a> </figure>
+        <div class="content">
+          <h2 class="title ellipsis m-multi-ellipsis"><a href="{$v['url']}" >{$v['title']}</a></h2>
+          <p class="intro hidden-sm">{fun newstr($v['description'],40)} </p>
+          <p class="data clearfix"> <!--span class="hidden-sm-md-lg author fl"><i class="iconfont icon-user"></i>未知</span-->
+            <time class="time fl" >
+            <i class="iconfont icon-time"></i>{fun date('Y-m-d',$v['addtime'])}
+            </time>
+            <span class="view fl"><i class="iconfont icon-view"></i>{$v['hits']}</span> <span class="hidden-sm-md-lg tag ellipsis fr"> <i class="iconfont icon-tag"></i>   </span> </p>
+        </div>
+      </article>
+	{/foreach} 
+	{else}
+	<article class="article-list br mb sb clearfix">
+	<p>您搜索的 “{$word}” 暂无找到相关记录~</p>
+	</article>
+	{/if}
+	 
+     
+    </div>
+    <div class="pages">
+	
+	{if($lists)}
+
+	<ul >
+	
+	<li class="page-item {if(!$listpage['prev'])}disabled{/if}">
+	<a class="page-link" href="{$listpage['prev']}" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+	
+	{foreach $listpage['list'] as $ss}
+	
+	<li {if($ss['num']==$listpage['current_num'])}class="thisclass" {/if}><a href="{$ss['url']}" class="page-link">{$ss['num']}</a></li>
+	{/foreach}
+	
+	<li class="page-item {if(!$listpage['next'])}disabled{/if}"><a class="page-link" href="{$listpage['next']}" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+	</ul>
+	{/if}
+
+    </div>
+  </section>
+ {include="right"}
+</div>
+{include="footer"}
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<footer class="footer">
+  <div class="main container">
+    <div class="f-about fl">
+      <p class="title pb1">关于本站</p>
+      <div class="intro">极致CMS打造全网好用免费的建站程序，一站部署，同时拥有响应式官网，手机端，app，微信小程序，百度小程序！</div>
+      <small><span>Copyright &copy; {$webconf['web_copyright']}  版权所有 Power by <a href="https://www.jizhicms.cn" target='_blank'>www.jizhicms.cn</a> </span><br/>
+	  <span class="icp">备案号：<a target="_blank" href="http://www.beian.miit.gov.cn/">{$webconf['web_beian']}</a>
+      <a target="_blank" href="/sitemap.xml">网站地图</a></span></small> </div>
+    <div class="f-contact fl">
+      <p class="title pb1">联系我们</p>
+      <div>
+        <p>咨询可联系如下方式：</p>
+        <p><i class="iconfont icon-qq-fill"></i>QQ：{$webconf['web_qq']}</p>
+        <p><i class="iconfont icon-wechat-fill"></i>邮箱：{$webconf['web_email']}</p>
+      </div>
+    </div>
+    <div class="f-qr fr">
+      <p class="title pb1">关注我们</p>
+      <div><img class="img br" src="{$webconf['web_weixin']}"/></div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div id="toolbar" class="toolbar "> <a class="hidden-sm-md-lg btn qq sb br" href="http://wpa.qq.com/msgrd?v=3&uin={$webconf['web_qq']}&site=qq&menu=yes" target="_blank" rel="nofollow"> <i class="iconfont icon-qq"></i> <span class="qqnum sb br"></span> </a>
+    <div id="qr" class="hidden-sm-md-lg btn sb br"> <i class="iconfont icon-qr"></i> <img id="qr-img" class="br sb" src="{$webconf['web_weixin']}"> </div>
+    <div id="totop" class="btn hidden sb br"> <i class="iconfont icon-top"></i> </div>
+  </div>
+</footer>
+<!--黑色透明遮罩-->
+<div id="mask-hidden" class="mask-hidden transition"></div>
+<script src="{$tpl}js/common.js" type="text/javascript"></script> 
+<!--[if lt IE 9]><script src="{$tpl}js/html5-css3.js"></script><![endif]--> 
+<!--初始化Swiper--> 
+<script src="{$tpl}js/jquery.share.min.js"></script>     
+<script>
+    var swiper = new Swiper('.swiper-container', {
+    pagination: '.swiper-pagination',
+    nextButton: '.swiper-button-next',
+    prevButton: '.swiper-button-prev',
+    centeredSlides: true,
+    autoplay: 3500,
+    slidesPerView: 1,
+    paginationClickable: true,
+    autoplayDisableOnInteraction: false,
+    spaceBetween: 0,
+    loop: true
+});
+
+//点赞
+	function likes(tid,id){
+		$.ajax({
+				 url:"{fun U('user/likesAction')}",//请求的url地址
+				 dataType:"json",//返回格式为json
+				 async:true,//请求是否异步，默认为异步，这也是ajax重要特性
+				 data:{tid:tid,id:id,ajax:1},//参数值
+				 type:"POST",//请求方式
+				 beforeSend:function(){
+					//请求前的处理
+					},
+					 success:function(r){
+						if(r.code==0){
+							alert(r.msg);
+							window.location.reload();
+						}else{
+							alert(r.msg);
+						}
+							
+					},
+					 complete:function(){
+					//请求完成的处理
+					},
+					 error:function(){
+					//请求出错处理
+						alert('网络错误');
+					}
+
+						
+				
+			})
+	}
+	function comment(zid,pid){
+	$("#zid").val(zid);
+	$("#pid").val(pid);
+	if(pid!=0){
+		//如果不是第一层评论，则@评论人昵称--特殊规则
+		//如果要更改样式，请对应修改Home/CommentController.php里面内容
+		var u = $('#comment_level_'+pid).html();
+		$("#commentx").html('[@'+u+']');
+	}
+	$("#commentx").focus();//跳到跳到评论框
+}
+</script>

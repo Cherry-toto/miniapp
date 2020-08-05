@@ -1,0 +1,399 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<meta name="applicable-device" content="pc,mobile">
+<title>深度剖析百度网站优化软件工作原理_SEO技术资讯个人博客</title>
+<meta name="keywords" content="seo教程,优化软件" />
+<meta name="description" content="近几年号称3-7天上首页的百度网站优化软件层出不穷，很多用户使用之后网站的排名确实上升了。甚至很多公司就是靠一款或者几款软件来开展业务。有的SEO公司长年累月做不上去的网站的，可能通过软件三四天的时间就有很好的排名了。那么排名软件的核心技术到底是什么，居然有这么强大的功能。今天就带领大家去揭开百度快速排名软件的神秘面纱。 一、工作原理 几乎所有" />
+<link rel="stylesheet" href="static/css/iconfont.css" type="text/css">
+<link rel="stylesheet" href="static/css/style.css" type="text/css">
+<!--[if lt IE 9]><div class="fuck-ie"><p class="tips">*您的IE浏览器版本过低，为获得更好的体验请使用Chrome、Firefox或其他现代浏览器!</p></div><![endif]-->
+<script src="static/js/jquery-2.2.4.min.js" type="text/javascript"></script>
+<script src="static/js/xiuzhanwang.js" type="text/javascript"></script>
+<script src="static/js/dedeajax2.js"></script>
+<style type="text/css">
+a:hover, .pc-nav .active, .pc-nav .sub-nav a:hover, #aside_hot .list-1, #aside_hot .list-2, #aside_hot .list-3, .recommend-b .category, .full-post .read-more, .flink a.iconfont:hover, .thumbs-btn, #cancel-reply, .art-content a, #tbCalendar a, .comment-at {
+color:#;
+}
+.recommend-b .category, .full-post .read-more, .thumbs-btn, .art-content .tags:hover, #divCatalog li a:hover, #divContorPanel .cp-login a:hover, #divContorPanel .cp-vrs a:hover, #divSearchPanel input[type='submit'] {
+border:1px solid #;
+}
+.art-content a:hover {
+border-bottom:1px dashed #;
+}
+.art-content blockquote {
+border-left:4px solid #;
+}
+::selection, ::-moz-selection {
+background:#;
+}
+.thumbs_done, .thumbs-btn:hover, .art-content .tags:hover, #widget_aside_author .level, .full-post .read-more:hover, .recommend-b .category:hover, .recommend-a .category, .swiper-pagination-bullet-active, .s-button, .c-title::after, .m-nav .sub-nav, .com-submit, .page-numbers, a.page-numbers:hover, #divCatalog li a:hover, #divTags li a:hover, #divContorPanel .cp-login a:hover, #divContorPanel .cp-vrs a:hover, #qr:hover, .btn.qq:hover, .toolbar .btn:hover, .dropdown-nav li a:hover, .dropdown-nav .active a, .dropdown-nav .active a:hover, #divSearchPanel input[type='submit'], #tbCalendar tbody a, .header .contribute .a {
+background-color:#;
+}
+</style>
+</head>
+<body>
+<header class="header sb">
+  <div class="h-wrap container clearfix">
+    <h1 class="logo-area fl"> <a href="/" title="SEO培训个人博客自适应网站织梦模板"> <img class="img" src="static/picture/logo.png" alt="SEO培训个人博客自适应网站织梦模板" title="SEO培训个人博客自适应网站织梦模板"/> </a> </h1>
+    <div class="m-nav-btn"><i class="iconfont icon-category"></i></div>
+    <span id="search-button" class="search-button fr"><i class="iconfont icon-search"></i></span>
+    <div id="search-area" class="container hidden br sb animated-fast fadeInUpMenu">
+      <form  name="formsearch" class="searchform clearfix" action="/plus/search.php">
+        <input type="hidden" name="kwtype" value="0" />
+        <input class="s-input br fl" type="text" name="q" placeholder="请输入关键词...">
+        <button class="s-button fr br transition brightness" type="submit">搜 索</button>
+      </form>
+    </div>
+    <nav class="responsive-nav">
+      <div class="pc-nav m-nav fr">
+        <ul class="nav-ul">
+          <li><a class=''  href="/">网站首页</a></li>
+          <li><a href="/jiaocheng/" class="active">SEO教程</a><span class="toggle-btn"><i class="iconfont icon-down"></i></span>
+            <ul class="dropdown-nav nav-sb br sub-nav animated-fast fadeInUpMenu clearfix">
+              
+              <li><a href="/a/shouluwenti/">收录问题</a></li>
+              
+              <li><a href="/a/zhannayouhua/">站内优化</a></li>
+              
+              <li><a href="/a/zhanwaiyouhua/">站外优化</a></li>
+              
+              <li><a href="/a/youhuajichu/">优化基础</a></li>
+              
+            </ul>
+          </li><li><a href="/jishu/" class="">SEO技术</a><span class="toggle-btn"><i class="iconfont icon-down"></i></span>
+            <ul class="dropdown-nav nav-sb br sub-nav animated-fast fadeInUpMenu clearfix">
+              
+              <li><a href="/a/changguijishu/">常规技术</a></li>
+              
+              <li><a href="/a/heimaojishu/">黑帽技术</a></li>
+              
+            </ul>
+          </li><li><a href="/anli/" class="">SEO案例</a><span class="toggle-btn"><i class="iconfont icon-down"></i></span>
+            <ul class="dropdown-nav nav-sb br sub-nav animated-fast fadeInUpMenu clearfix">
+              
+              <li><a href="/a/jingdiananli/">经典案例</a></li>
+              
+              <li><a href="/a/kuaipaianli/">快排案例</a></li>
+              
+            </ul>
+          </li><li><a href="/peixun/" class="">SEO培训</a><span class="toggle-btn"><i class="iconfont icon-down"></i></span>
+            <ul class="dropdown-nav nav-sb br sub-nav animated-fast fadeInUpMenu clearfix">
+              
+              <li><a href="/a/mianfeishipin/">免费视频</a></li>
+              
+              <li><a href="/a/fufeijiaocheng/">付费教程</a></li>
+              
+            </ul>
+          </li><li><a href="/jianshe/" class="">网站建设</a><span class="toggle-btn"><i class="iconfont icon-down"></i></span>
+            <ul class="dropdown-nav nav-sb br sub-nav animated-fast fadeInUpMenu clearfix">
+              
+              <li><a href="/a/zhimengmoban/">织梦模板</a></li>
+              
+              <li><a href="/a/diguomoban/">帝国模板</a></li>
+              
+              <li><a href="/a/qitayuanma/">其他源码</a></li>
+              
+            </ul>
+          </li><li><a href="/guanyuwomen/" class="">关于我们</a><span class="toggle-btn"><i class="iconfont icon-down"></i></span>
+            <ul class="dropdown-nav nav-sb br sub-nav animated-fast fadeInUpMenu clearfix">
+              
+              <li><a href="/a/guanyubenzhan/">关于本站</a></li>
+              
+              <li><a href="/a/lianxiwomen/">联系我们</a></li>
+              
+            </ul>
+          </li> 
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<nav class="breadcrumb container">当前位置： <a href='http://k89.zzidc.info/'>首页</a> > <a href='/jiaocheng/'>SEO教程</a> > <a href='/a/shouluwenti/'>收录问题</a> >  > 文章正文 </nav>
+<div id="content" class="content container clearfix">
+  <div id="mainbox" class="article-box fl mb">
+    <article class="art-main sb br mb">
+      <div class="art-head mb">
+        <h1 class="art-title">深度剖析百度网站优化软件工作原理</h1>
+        <div class="head-info"> <span class="author"><i class="iconfont icon-user"></i>未知</span>
+          <time class="time" datetime="2019-05-31" title="2019-05-31"> <i class="iconfont icon-time"></i>2019-05-31</time>
+          <span class="view"><i class="iconfont icon-view"></i><script src="static/js/count.js" type='text/javascript' language="javascript"></script> ℃</span> <span class="comment"><i class="iconfont icon-comment"></i><script type="text/javascript" src="static/js/count.js"></script> 条</span> </div>
+      </div>
+      <!-- 广告位AD4  -->
+      
+      <div class="art-content"> <p><p>
+	近几年号称3-7天上首页的百度网站优化软件层出不穷，很多用户使用之后网站的排名确实上升了。甚至很多公司就是靠一款或者几款软件来开展业务。有的SEO公司长年累月做不上去的网站的，可能通过软件三四天的时间就有很好的排名了。那么排名软件的核心技术到底是什么，居然有这么强大的功能。今天就带领大家去揭开百度快速排名软件的神秘面纱。</p>
+<p>
+	一、工作原理</p>
+<p>
+	几乎所有人在看见一款软件时，想到的第一个问题就软件的工作原理。当你向客服去咨询的时候，你会发现10家有8家回答你的都是同一句话：&ldquo;通过反馈网站权重数据包给搜索引擎，合理的分配网站的权重，提升网站的关注度和友好度&rdquo;，但是这句话的到底是什么意思，不要说各位没有太多接触过SEO的，就我这个进入SEO行业10多年的老司机同样是一脸懵逼。那百度快速排名软件的工作原理到底是什么呢?在我们刚入行业的时候，前辈们经常跟我们说的一句话就是：&ldquo;网站优化做的就是用户体验&rdquo;。但绝大部分都没有去认真的做这一点，但排名软件恰恰把这一点做到了极至。当然他不是提升了网站的用户体验，而是通过技术手段让网站有了用户体验的数据，去向搜索引擎反馈，所以网站的排名才上升了。</p>
+<p>
+	二、排名软件会不会k站</p>
+<p>
+	在网上我们可以看见很多软件的负面贴子，有说排名做不上去的，有说k站的。对于k站的问题，我有咨询过相关的朋友(国内第一批做快排软件的，目前市场上的软件核心，八成都是仿的他的)当是我朋友的回答是：&ldquo;软件能k站?哪家的软件，你介绍给我，我去买。&rdquo;我问他为什么，他说：&ldquo;我用软件帮你做排名，不一定可以做上去，如果可以k站我还不如直接把排名在你前面的网站全部k掉，这样你的排名百分百上去了。K站技术在我们这个行业里面就相当于必杀技，搜索引擎是不可能让这样的技术存在的。&rdquo;我又问&rdquo;那为什么有的网站在用过软件之后确实k掉了呢。&rdquo;他说：&ldquo;有的网站是k掉了，但是，有没有观察一下k站之前网站的情况。一个已经回光返照的网站，什么样的技术都救不了，软件只是压倒骆驼的最一根稻草。&rdquo;</p>
+<p>
+	三、软件使用过程当中的注意事项</p>
+<p>
+	在软件使用的过程当中，建议是多个关键词同时优化，不要只是去做一个或者两个关键词。按照上面我们分析的软件的工作原理，如果只做一个关键词，那整个网站给搜索引擎反馈数据的关键词就只有一个，这样网站的关键词可能短时间保持首页，但长期以往各个关键词反馈的数据差距越来越大，搜索引擎肯定会对网站做出惩罚。同样如果你的网站常年不更新，蜘蛛来发现不了新的东西，但是网站反馈的数据还在不断的上涨，这样的网站搜索引擎必然是也会做出处罚。</p>
+<p>
+	百度网站优化软件只是辅助工作，只是减轻我们的工作量工具，并不能完全替代人工，软件并不是关键词排名提升的捷径，他只是关键词排名提升道路上的交通工具，前期我们的的基础工作一定需要做好，不然在没有路的情况下，就是再好的交通工具，也无法送你到达终点。</p>
+<p>
+	刷排升刷排软件是一款短时间内提升关键字搜索自然排名的软件，适用于百度搜索引擎的seo优化。可以快速提升网站的排名，快速提升百度前2页的分类信息、帖子、B2B、视频帖子等信息排名。软件推出以来，受到国内众多企业、个人用户的认可，被大家用于网站推广，宣传自助品牌工作中，大大的节省了广大客户搜索引擎竞价排名广告支出，提高了企业的广告投入的价值，使企业的业务量短期内迅速得到提升。也得到了众多SEO公司的认可，现已成为很多SEO公司的得力助手!</p>
+</p> 
+        <!--打赏-->
+        
+        <div class="art-copyright br mb">
+          <div><strong cclass="addr">本文地址：</strong> <a href="http://k89.zzidc.info/a/shouluwenti/10.html">http://k89.zzidc.info/a/shouluwenti/10.html</a></div>
+          <div><span class="copyright">版权声明：</span>本文发布于SEO培训个人博客自适应网站织梦模板 内容均来源于互联网 如有侵权联系删除</div>
+        </div>
+        <div class="social-widget mt clearfix"> 
+          <!--点赞--> 
+          <!--分享--> 
+        </div>
+      </div>
+    </article>
+    <!-- 广告位AD5  -->
+    <div class="prev-next sb br mb clearfix">
+      <p class="post-prev fl ellipsis"> 上一篇：<a href='/a/shouluwenti/9.html'>移动端优化网站，SEOer需要注意细节</a>  </p>
+      <p class="post-next fr ellipsis"> 下一篇：<a href='/a/shouluwenti/11.html'>seo秒收快排三个技巧</a>  </p>
+    </div>
+    <!--相关文章优先选择同tag的文章，无tag则调用最新文章-->
+    <div class="related-art sb br mb">
+      <p class="c-title"><span class="name">相关文章</span></p>
+      <ul class="ul clearfix">
+         <li class="related-item mt fl"> <a href="/a/shouluwenti/12.html" title="排名优化对竞争对手的解剖"> <span class="span"> <img class="img br img-cover" src="static/picture/defaultpic.gif" alt="排名优化对竞争对手的解剖"> </span>
+          <p class="titile">排名优化对竞争对手的解剖</p>
+          </a> </li>
+<li class="related-item mt fl"> <a href="/a/shouluwenti/11.html" title="seo秒收快排三个技巧"> <span class="span"> <img class="img br img-cover" src="static/picture/defaultpic.gif" alt="seo秒收快排三个技巧"> </span>
+          <p class="titile">seo秒收快排三个技巧</p>
+          </a> </li>
+<li class="related-item mt fl"> <a href="/a/shouluwenti/9.html" title="移动端优化网站，SEOer需要注意细节"> <span class="span"> <img class="img br img-cover" src="static/picture/defaultpic.gif" alt="移动端优化网站，SEOer需要注意细节"> </span>
+          <p class="titile">移动端优化网站，SEOer需要注意细节</p>
+          </a> </li>
+<li class="related-item mt fl"> <a href="/a/shouluwenti/8.html" title="看关键词排名优化需要哪些工作"> <span class="span"> <img class="img br img-cover" src="static/picture/defaultpic.gif" alt="看关键词排名优化需要哪些工作"> </span>
+          <p class="titile">看关键词排名优化需要哪些工作</p>
+          </a> </li>
+<li class="related-item mt fl"> <a href="/a/shouluwenti/7.html" title="seo优化关键词设置方案"> <span class="span"> <img class="img br img-cover" src="static/picture/defaultpic.gif" alt="seo优化关键词设置方案"> </span>
+          <p class="titile">seo优化关键词设置方案</p>
+          </a> </li>
+<li class="related-item mt fl"> <a href="/a/shouluwenti/6.html" title="论百度seo排名软件百家争鸣"> <span class="span"> <img class="img br img-cover" src="static/picture/defaultpic.gif" alt="论百度seo排名软件百家争鸣"> </span>
+          <p class="titile">论百度seo排名软件百家争鸣</p>
+          </a> </li>
+
+      </ul>
+    </div>
+     <div id="comment" class="post-comment clearfix sb br mt">
+      <p id="comments-title" class="c-title mb bn"><span>发表评论</span> <span class="comment-num"> （已有<span class="emphasize"> <script type="text/javascript" src="static/js/count.js"></script> </span>条评论） </span></p>
+      <div class="compost">
+                 <!-- //AJAX评论区 开始 -->
+<script type='text/javascript' src='static/js/jquery.min.js'></script><!-- //如果你页面中已经加载过jquery库，请删除这一行，防止冲突 -->
+<link href="static/css/comments.css" rel="stylesheet" type="text/css" />
+<div id="comments" class="entry-comments">
+ 
+	<div id="respond" class="comment-respond">
+	<form id="commentform" action="" method="post">
+	<input type="hidden" name="dopost" value="send" />
+	<input type="hidden" name="aid" value="10" />
+	<div class="comt-ctrl"><div class="comt-tips">
+		<input type='hidden' name='comment_post_ID' value='10' id='comment_post_ID' />
+		<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+		<input type="hidden" id="_wp_unfiltered_html_comment_disabled" name="_wp_unfiltered_html_comment_disabled" value="caa5eb0098" /><script>(function(){if(window===window.parent){document.getElementById('_wp_unfiltered_html_comment_disabled').name='_wp_unfiltered_html_comment';}})();</script>
+	</div></div>
+	<div class="comment-form" id="_ajax_feedback">
+		<div class="comment-form-comment">
+			<textarea disabled="disabled" placeholder="需要登录才能发表评论" id="comment" name="msg" class="ipt" rows="4"></textarea>
+		</div>
+		<div class="form-submit">
+			<div class="form-submit-text pull-left"><a title="注册" href="/member/index_do.php?fmdo=user&dopost=regnew">注册</a>&nbsp;&nbsp;<a title="登录" href="../member/login.php">登录</a></div>
+			<input name="submit" type="submit" id="must-submit" class="submit" value="发表">
+			<input type="button" id="cancel-comment-reply-link" class="submit" value="取消" style="display:none;">
+		</div>
+	</div>
+	</form>
+</div>
+<script language='javascript'>
+function CheckCommentsLogin(){
+	var taget_obj = document.getElementById('_ajax_feedback');
+	myajax = new DedeAjax(taget_obj,false,false,'','','');
+	myajax.SendGet2("http://k89.zzidc.info/comments/checkcommentslogin.php?aid=10");
+	DedeXHTTP = null;
+}
+CheckCommentsLogin();
+</script>
+<h3 class="comments-title"> 评论列表</h3>
+<div id="postcomments">
+<ul class="comments-list" id="commetcontent"></ul>
+<div class="pagination clearfix">
+</div>
+</div>
+<script language='javascript'>
+function LoadCommets(page)
+{
+	var taget_obj = document.getElementById('commetcontent');
+	var waithtml = "<div style='line-height:50px'><img src='static/picture/loadinglit.gif' />评论加载中...</div>";
+	var myajax = new DedeAjax(taget_obj, true, true, '', 'x', waithtml);
+	myajax.SendGet2("http://k89.zzidc.info/comments/comments.php?dopost=getlist&aid=10&page="+page);
+	DedeXHTTP = null;
+}
+LoadCommets(1);
+</script>
+</div>
+<script>
+window.jsui = {
+    uri: 'http://k89.zzidc.info'
+};
+</script>
+<script type='text/javascript' src='static/js/loader.js'></script>
+<!-- //AJAX评论区 结束 -->
+
+      </div>
+      <div class="comment-list mt">
+        <p class="no-comment"><i class="iconfont icon-sofa"></i> 快来评论，快来抢沙发吧~</p>
+        <span id="AjaxCommentBegin"></span>
+        <div class="pagebar mb mt">
+          <div class="nav-links"> </div>
+        </div>
+        <span id="AjaxCommentEnd"></span> </div>
+    </div> 
+  </div>
+    <aside id="sidebar" class="hidden-sm-md-lg fr">
+      <div class="theiaStickySidebar">
+        <section id="aside_about" class="widget widget_aside_about sb br mb"> <img class="bg" src="static/picture/a.jpg"/>
+          <div class="avatar"><img class="img" src="static/picture/xiuzhan.jpg"/></div>
+          <div class="wrap pd">
+            <p class="title">SEO技术资讯个人博客</p>
+            <p class="info">某某具有多年品牌营销经验，资深的营销专家带队，整合专业的视频团队，为企业提供账号策划、开通蓝v认证、账号运营、店铺管理培训、内容创作拍摄、视频整合营销的等全栈式运营培训服务。 没流量?涨粉慢?不懂拍摄？不会变现？所有问题某</p>
+            <!--<ul class="ul clearfix">
+              <li class="li fl"><span class="num">115013</span><small>阅读数</small></li>
+              <i class="line iconfont icon-line"></i>
+              <li class="li fl"><span class="num">125</span><small>文章数</small></li>
+            </ul>--> 
+          </div>
+        </section>
+        <section id="aside_hot" class="widget widget_aside_hot sb br mb">
+          <p class="c-title mb"><span class="name">热门文章</span></p>
+          <ul class="widget-content aside_hot">
+            <li class="clearfix"><span class="list list-1">1.</span><a href="/a/shouluwenti/60.html" title="阿里云提示织梦DedeCMS v5.7 注册用户任">阿里云提示织梦DedeCMS v5.7 注册用户任</a></li>
+<li class="clearfix"><span class="list list-1">2.</span><a href="/a/heimaojishu/33.html" title="单页SEO排名后期稳定排名操作之长尾">单页SEO排名后期稳定排名操作之长尾</a></li>
+<li class="clearfix"><span class="list list-1">3.</span><a href="/a/heimaojishu/23.html" title="讨论一个大家都关注的SEO话题，搜索">讨论一个大家都关注的SEO话题，搜索</a></li>
+<li class="clearfix"><span class="list list-1">4.</span><a href="/a/fufeijiaocheng/66.html" title="夜息seo视频教程：技术驱动的SEO">夜息seo视频教程：技术驱动的SEO</a></li>
+<li class="clearfix"><span class="list list-1">5.</span><a href="/a/heimaojishu/28.html" title="分享两个SEO培训学员做的课堂笔记，">分享两个SEO培训学员做的课堂笔记，</a></li>
+<li class="clearfix"><span class="list list-1">6.</span><a href="/a/zhimengmoban/56.html" title="防止域名被泛解析的有效方法">防止域名被泛解析的有效方法</a></li>
+<li class="clearfix"><span class="list list-1">7.</span><a href="/a/jingdiananli/34.html" title="为什么附子老师的SEO学员排名很多都">为什么附子老师的SEO学员排名很多都</a></li>
+<li class="clearfix"><span class="list list-1">8.</span><a href="/a/shouluwenti/58.html" title="dede织梦artlist和list标签调用多图图集">dede织梦artlist和list标签调用多图图集</a></li>
+<li class="clearfix"><span class="list list-1">9.</span><a href="/a/zhimengmoban/62.html" title="原创茶叶文化新闻资讯织梦模板">原创茶叶文化新闻资讯织梦模板</a></li>
+<li class="clearfix"><span class="list list-1">10.</span><a href="/a/fufeijiaocheng/68.html" title="爱站seo自学视频教程">爱站seo自学视频教程</a></li>
+
+          </ul>
+        </section>
+        <section id="aside_hot_comment" class="widget widget_aside_hot_comment sb br mb">
+          <p class="c-title mb"><span class="name">热评文章</span></p>
+          <ul class="widget-content aside_hot_comment">
+            <li class="list clearfix"><a href="/a/shouluwenti/60.html" title="阿里云提示织梦DedeCMS v5.7 注册用户任意文件"><span class="img-wrap"><img src="static/picture/defaultpic.gif" alt="阿里云提示织梦DedeCMS v5.7 注册用户任意文件" class="img-cover br random-img"></span>
+              <div class="new-text">
+                <p class="title">阿里云提示织梦DedeCMS v5.7 注册用户任意文件</p>
+                <div class="info"><span class="time"><i class="iconfont icon-time"></i>2019-07-25</span><span class="comment"><i class="iconfont icon-view"></i>228</span></div>
+              </div>
+              </a></li>
+<li class="list clearfix"><a href="/a/heimaojishu/33.html" title="单页SEO排名后期稳定排名操作之长尾词流量建"><span class="img-wrap"><img src="static/picture/0qsg4n-0-lp.png" alt="单页SEO排名后期稳定排名操作之长尾词流量建" class="img-cover br random-img"></span>
+              <div class="new-text">
+                <p class="title">单页SEO排名后期稳定排名操作之长尾词流量建</p>
+                <div class="info"><span class="time"><i class="iconfont icon-time"></i>2019-06-01</span><span class="comment"><i class="iconfont icon-view"></i>199</span></div>
+              </div>
+              </a></li>
+<li class="list clearfix"><a href="/a/heimaojishu/23.html" title="讨论一个大家都关注的SEO话题，搜索引擎如何"><span class="img-wrap"><img src="static/picture/0p94j427-0-lp.png" alt="讨论一个大家都关注的SEO话题，搜索引擎如何" class="img-cover br random-img"></span>
+              <div class="new-text">
+                <p class="title">讨论一个大家都关注的SEO话题，搜索引擎如何</p>
+                <div class="info"><span class="time"><i class="iconfont icon-time"></i>2019-06-01</span><span class="comment"><i class="iconfont icon-view"></i>192</span></div>
+              </div>
+              </a></li>
+<li class="list clearfix"><a href="/a/fufeijiaocheng/66.html" title="夜息seo视频教程：技术驱动的SEO"><span class="img-wrap"><img src="static/picture/1-191119120f0107.jpg" alt="夜息seo视频教程：技术驱动的SEO" class="img-cover br random-img"></span>
+              <div class="new-text">
+                <p class="title">夜息seo视频教程：技术驱动的SEO</p>
+                <div class="info"><span class="time"><i class="iconfont icon-time"></i>2019-11-19</span><span class="comment"><i class="iconfont icon-view"></i>191</span></div>
+              </div>
+              </a></li>
+<li class="list clearfix"><a href="/a/heimaojishu/28.html" title="分享两个SEO培训学员做的课堂笔记，细节决定"><span class="img-wrap"><img src="static/picture/0q4343a6-0-lp.png" alt="分享两个SEO培训学员做的课堂笔记，细节决定" class="img-cover br random-img"></span>
+              <div class="new-text">
+                <p class="title">分享两个SEO培训学员做的课堂笔记，细节决定</p>
+                <div class="info"><span class="time"><i class="iconfont icon-time"></i>2019-06-01</span><span class="comment"><i class="iconfont icon-view"></i>189</span></div>
+              </div>
+              </a></li>
+
+          </ul>
+        </section>
+        <section id="divTags" class="widget widget_tags sb br mb">
+          <p class="c-title mb"><span class="name">标签列表</span></p>
+          <ul class="widget-content divTags">
+            
+            <li><a href='/tags.php?/seo%E5%85%A5%E9%97%A8/'>seo入门</a></li>
+            
+            <li><a href='/tags.php?/SEO%E8%AF%BE%E7%A8%8B/'>SEO课程</a></li>
+            
+            <li><a href='/tags.php?/SEO%E5%9F%B9%E8%AE%AD/'>SEO培训</a></li>
+            
+            <li><a href='/tags.php?/seo%E6%95%99%E7%A8%8B/'>seo教程</a></li>
+            
+            <li><a href='/tags.php?/%E6%96%B0%E7%AB%99%E6%8E%92%E5%90%8D/'>新站排名</a></li>
+            
+            <li><a href='/tags.php?/%E9%97%AA%E7%94%B5%E6%8E%92%E5%90%8D/'>闪电排名</a></li>
+            
+            <li><a href='/tags.php?/%E6%8E%92%E5%90%8D%E8%BD%AF%E4%BB%B6/'>排名软件</a></li>
+            
+            <li><a href='/tags.php?/%E4%BC%98%E5%8C%96%E8%BD%AF%E4%BB%B6/'>优化软件</a></li>
+            
+            <li><a href='/tags.php?/%E7%BD%91%E7%AB%99%E5%BF%AB%E6%8E%92/'>网站快排</a></li>
+            
+            <li><a href='/tags.php?/%E6%8E%92%E5%90%8D%E4%BC%98%E5%8C%96/'>排名优化</a></li>
+            
+            <li><a href='/tags.php?/seo%E6%8A%80%E6%9C%AF/'>seo技术</a></li>
+            
+            <li><a href='/tags.php?/seo%E6%A6%82%E5%BF%B5/'>seo概念</a></li>
+            
+            <li><a href='/tags.php?/seo%E8%BF%90%E8%90%A5/'>seo运营</a></li>
+            
+          </ul>
+        </section>
+      </div>
+    </aside>
+</div>
+<footer class="footer">
+  <div class="main container">
+    <div class="f-about fl">
+      <p class="title pb1">关于本站</p>
+      <div class="intro">SEO培训是隔壁王哥10年经验的抖音教程分享，免费SEO和自媒体培训短视频教程分享，通过自媒体短视频引流操作打造全新的网络营销平台。</div>
+      <small><span>Copyright &copy; 2002-2019  SEO培训个人博客自适应网站织梦模板  版权所有 Power by <a href=http://www.xiuzhanwang.com target='_blank'>Www.Xiuzhanwang.Com</a> </span><span class="icp">备案号：<a href="http://www.beian.miit.gov.cn/">粤ICP备1234567</a><br/>
+      <!--<a href="">XML地图</a>|<a href="">网站地图</a>--></span></small> </div>
+    <div class="f-contact fl">
+      <p class="title pb1">联系我们</p>
+      <div>
+        <p>咨询可联系如下方式：</p>
+        <p><i class="iconfont icon-qq-fill"></i>QQ：2361928288</p>
+        <p><i class="iconfont icon-wechat-fill"></i>邮箱：12345678@qq.com</p>
+      </div>
+    </div>
+    <div class="f-qr fr">
+      <p class="title pb1">关注我们</p>
+      <div><img class="img br" src="static/picture/qr.jpg"/></div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div id="toolbar" class="toolbar "> <a class="hidden-sm-md-lg btn qq sb br" href="http://wpa.qq.com/msgrd?v=3&uin=2361928288&site=qq&menu=yes" target="_blank" rel="nofollow"> <i class="iconfont icon-qq"></i> <span class="qqnum sb br"></span> </a>
+    <div id="qr" class="hidden-sm-md-lg btn sb br"> <i class="iconfont icon-qr"></i> <img id="qr-img" class="br sb" src="static/picture/qr.jpg"> </div>
+    <div id="totop" class="btn hidden sb br"> <i class="iconfont icon-top"></i> </div>
+  </div>
+</footer>
+<!--黑色透明遮罩-->
+<div id="mask-hidden" class="mask-hidden transition"></div>
+<script src="static/js/common.js" type="text/javascript"></script> 
+<!--[if lt IE 9]><script src="static/js/html5-css3.js"></script><![endif]--> 
+<!--初始化Swiper--> 
+
+</body>
+</html>

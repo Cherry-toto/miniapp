@@ -1,0 +1,43 @@
+<header class="header sb">
+  <div class="h-wrap container clearfix">
+    <h1 class="logo-area fl"> <a href="/" title="{$webconf['web_name']}"> <img class="img" src="{$webconf['web_logo']}" alt="{$webconf['web_name']}" title="{$webconf['web_name']}"/> </a> </h1>
+    <div class="m-nav-btn"><i class="iconfont icon-category"></i></div>
+    <span id="search-button" class="search-button fr"><i class="iconfont icon-search"></i></span>
+    <div id="search-area" class="container hidden br sb animated-fast fadeInUpMenu">
+      <form  name="formsearch" class="searchform clearfix" action="/search">
+        <input type="hidden" name="molds" value="article" />
+        <input class="s-input br fl" type="text" name="word" placeholder="请输入关键词...">
+        <button class="s-button fr br transition brightness" type="submit">搜 索</button>
+      </form>
+    </div>
+    <nav class="responsive-nav">
+      <div class="pc-nav m-nav fr">
+        <ul class="nav-ul">
+          <li><a {if(!isset($type))}{/if}  href="{$webconf['domain']}/">网站首页</a></li>
+		  {foreach $classtypedata as $v} 
+			
+			{if($v['isshow']==1)}
+			
+				{if($v['pid']==0)}  
+				<li>
+		
+				<a {if(isset($type) && in_array($type['id'],$v['children']['ids']))}class='active'{/if} href="{$v['url']}">{$v['classname']}</a>
+					{if($v['haschild'])}
+					<span class="toggle-btn"><i class="iconfont icon-down"></i></span>
+					<ul class="dropdown-nav nav-sb br sub-nav animated-fast fadeInUpMenu clearfix">
+						{foreach $v['children']['list'] as $vv}
+						<li ><a {if(in_array($type['id'],$vv['children']['ids']))}class='active'{/if} href="{$vv['url']}">{$vv['classname']}</a></li>
+						{/foreach}
+					</ul>
+					{/if}
+				</li>
+				{/if}
+			{/if}
+			{/foreach}
+        
+          </li> 
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>

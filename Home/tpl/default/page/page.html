@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<meta name="applicable-device" content="pc,mobile">
+<title>{$type['classname']}-{$webconf['web_name']}</title>
+<meta name="keywords" content="{$type['keywords']}" />
+<meta name="description" content="{$type['description']}" />
+
+{include="style"}
+</head>
+<body>
+{include="header"}
+<nav class="breadcrumb container">当前位置： {$positions} </nav>
+<div id="content" class="content container clearfix">
+  <div id="mainbox" class="article-box fl mb">
+    <article class="art-main sb br mb">
+      <div class="art-head mb">
+        <h1 class="art-title">{$type['classname']}</h1>
+      </div>
+        <div class="art-content">{$type['body']}
+		</div>
+    </article>
+  </div>
+{include="right"}
+</div>
+{include="footer"}
+</body>
+</html>

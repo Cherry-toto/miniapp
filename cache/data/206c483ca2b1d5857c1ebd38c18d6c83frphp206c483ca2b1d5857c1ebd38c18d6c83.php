@@ -1,0 +1,1 @@
+<?php die();?>{"frcache_time":-1,"frcache_data":{"web_weixin":"\/static\/upload\/202008032118.png","homelogo":"\/static\/upload\/202008033594.jpg","homedes":"本站由极致CMS官方打造，一站式响应式模板，包含微信小程序，百度小程序。简单灵活方便，响应式设计，精美通用小程序，使其适用于更多行业！","homeback":"\/static\/upload\/202008039288.jpg"}}
