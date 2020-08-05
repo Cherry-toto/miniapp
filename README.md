@@ -52,5 +52,3 @@ QQ交流群：774764507（官方群）[【加群】](https://jq.qq.com/?_wv=1027
 ## 许可证  
 GPL      
 
-![极致CMS建站系统](http://down.jizhicms.cn/footer_1920x273.png)
-
