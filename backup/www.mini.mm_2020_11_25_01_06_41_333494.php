@@ -2,7 +2,7 @@
 MySQL Database Backup Tools
 Server:127.0.0.1:3306
 Database:www.mini.mm
-Data:2020-08-05 09:54:45
+Data:2020-11-25 01:06:41
 */
 SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
@@ -54,6 +54,23 @@ CREATE TABLE `jz_buylog` (
   `addtime` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+-- ----------------------------
+-- Table structure for jz_cachedata
+-- ----------------------------
+DROP TABLE IF EXISTS `jz_cachedata`;
+CREATE TABLE `jz_cachedata` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `field` varchar(50) DEFAULT NULL,
+  `molds` varchar(50) DEFAULT NULL,
+  `tid` int(11) NOT NULL DEFAULT '0',
+  `isall` tinyint(1) NOT NULL DEFAULT '1',
+  `sqls` varchar(500) DEFAULT NULL,
+  `orders` varchar(255) DEFAULT NULL,
+  `limits` int(11) NOT NULL DEFAULT '10',
+  `times` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- Table structure for jz_classtype
 -- ----------------------------
@@ -206,7 +223,7 @@ CREATE TABLE `jz_layout` (
   `sys` tinyint(1) NOT NULL DEFAULT '0',
   `isdefault` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1系统默认布局',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- Table structure for jz_level
 -- ----------------------------
@@ -327,6 +344,17 @@ CREATE TABLE `jz_member_group` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='会员分组';
 -- ----------------------------
+-- Table structure for jz_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `jz_menu`;
+CREATE TABLE `jz_menu` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `nav` text,
+  `isshow` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+-- ----------------------------
 -- Table structure for jz_message
 -- ----------------------------
 DROP TABLE IF EXISTS `jz_message`;
@@ -446,7 +474,7 @@ CREATE TABLE `jz_plugins` (
   `addtime` int(11) NOT NULL DEFAULT '0',
   `config` text COMMENT '配置',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- Table structure for jz_power
 -- ----------------------------
@@ -504,7 +532,7 @@ CREATE TABLE `jz_ruler` (
   `isdesktop` tinyint(1) NOT NULL DEFAULT '0',
   `sys` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1系统自带0不是系统自带',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=190 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=199 DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- Table structure for jz_sysconfig
 -- ----------------------------
@@ -517,7 +545,7 @@ CREATE TABLE `jz_sysconfig` (
   `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '配置类型,0系统配置,1图片类型,2输入框,3简短文字',
   `data` text COMMENT '配置内容',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=120 DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- Table structure for jz_tags
 -- ----------------------------
@@ -539,6 +567,7 @@ CREATE TABLE `jz_tags` (
   `member_id` int(11) DEFAULT '0',
   `ownurl` varchar(255) DEFAULT NULL,
   `addtime` int(11) NOT NULL DEFAULT '0',
+  `tags` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 -- ----------------------------
@@ -593,6 +622,9 @@ INSERT INTO `jz_article` (`id`,`title`,`tid`,`molds`,`htmlurl`,`keywords`,`descr
 INSERT INTO `jz_buylog` (`id`,`aid`,`userid`,`orderno`,`type`,`buytype`,`msg`,`molds`,`amount`,`money`,`addtime`) VALUES ('1','0','1','No20200803164054','3','jifen','登录奖励', NULL,'1.00','1.00','1596444054');
 INSERT INTO `jz_buylog` (`id`,`aid`,`userid`,`orderno`,`type`,`buytype`,`msg`,`molds`,`amount`,`money`,`addtime`) VALUES ('2','0','2','No20200803223231','3','jifen','登录奖励', NULL,'1.00','1.00','1596465151');
 INSERT INTO `jz_buylog` (`id`,`aid`,`userid`,`orderno`,`type`,`buytype`,`msg`,`molds`,`amount`,`money`,`addtime`) VALUES ('3','0','3','No20200804123522','3','jifen','登录奖励', NULL,'1.00','1.00','1596515722');
+-- ----------------------------
+-- Records of jz_cachedata
+-- ----------------------------
 -- ----------------------------
 -- Records of jz_classtype
 -- ----------------------------
@@ -653,14 +685,15 @@ INSERT INTO `jz_hook` (`id`,`module`,`namespace`,`controller`,`action`,`hook_nam
 -- ----------------------------
 -- Records of jz_layout
 -- ----------------------------
-INSERT INTO `jz_layout` (`id`,`name`,`top_layout`,`left_layout`,`gid`,`ext`,`sys`,`isdefault`) VALUES ('1','CMS系统默认','[]','[{"name":"网站管理","icon":"&amp;#xe699;","nav":["42","9","95","83","147","22"]},{"name":"商品管理","icon":"&amp;#xe698;","nav":["105","129","2","118","123","16","177"]},{"name":"扩展管理","icon":"&amp;#xe6ce;","nav":["76","116","141","142","143","35","61","154","153"]},{"name":"系统设置","icon":"&amp;#xe6ae;","nav":["40","54","49","70","115","114","66"]}]','0','系统配置，不可删除！','1','1');
+INSERT INTO `jz_layout` (`id`,`name`,`top_layout`,`left_layout`,`gid`,`ext`,`sys`,`isdefault`) VALUES ('1','CMS系统默认','[]','[{"name":"网站管理","icon":"&amp;#xe699;","nav":["42","9","95","83","147","22"]},{"name":"商品管理","icon":"&amp;#xe698;","nav":["105","129","2","118","123","16","177"]},{"name":"扩展管理","icon":"&amp;#xe6ce;","nav":["76","116","141","142","143","35","61","154","153"]},{"name":"系统设置","icon":"&amp;#xe6ae;","nav":["40","54","49","70","115","114","66"]}]','0','系统配置，不可删除！','1','0');
 INSERT INTO `jz_layout` (`id`,`name`,`top_layout`,`left_layout`,`gid`,`ext`,`sys`,`isdefault`) VALUES ('2','CMS客户界面','[]','[{"name":"内容管理","icon":"&amp;#xe6fb;","nav":["9"]},{"name":"栏目管理","icon":"&amp;#xe699;","nav":["42"]},{"name":"商品管理","icon":"&amp;#xe6cb;","nav":["105"]},{"name":"订单管理","icon":"&amp;#xe722;","nav":["129"]},{"name":"会员管理","icon":"&amp;#xe6b8;","nav":["2"]},{"name":"网站留言","icon":"&amp;#xe69f;","nav":["22"]},{"name":"友情链接","icon":"&amp;#xe6f7;","nav":["95"]},{"name":"轮播图","icon":"&amp;#xe6a8;","nav":["83"]},{"name":"公众号","icon":"&amp;#xe60e;","nav":["141","142"]},{"name":"系统设置","icon":"&amp;#xe6ae;","nav":["40","35","114","116"]}]','2','网站管理员-客户端-按需配置','0','0');
 INSERT INTO `jz_layout` (`id`,`name`,`top_layout`,`left_layout`,`gid`,`ext`,`sys`,`isdefault`) VALUES ('3','Blog界面','[]','[{"name":"栏目管理","icon":"&amp;#xe699;","nav":["42"]},{"name":"文章管理","icon":"&amp;#xe6fb;","nav":["9"]},{"name":"会员管理","icon":"&amp;#xe6b8;","nav":["2","118","123"]},{"name":"轮播图","icon":"&amp;#xe6a8;","nav":["83","89"]},{"name":"评论管理","icon":"&amp;#xe69b;","nav":["16"]},{"name":"留言管理","icon":"&amp;#xe69f;","nav":["22"]},{"name":"友情链接","icon":"&amp;#xe6f7;","nav":["95"]},{"name":"系统扩展","icon":"&amp;#xe6ce;","nav":["35","70","76","116"]},{"name":"系统设置","icon":"&amp;#xe6ae;","nav":["40","115","153","154","114"]}]','3','Blog用户界面，可以自定义修改，比较简洁一些','0','0');
 INSERT INTO `jz_layout` (`id`,`name`,`top_layout`,`left_layout`,`gid`,`ext`,`sys`,`isdefault`) VALUES ('4','基础建站客户端','[]','[{"name":"栏目管理","icon":"&amp;#xe699;","nav":["42"]},{"name":"文章管理","icon":"&amp;#xe6fb;","nav":["9"]},{"name":"商品管理","icon":"&amp;#xe6cb;","nav":["105"]},{"name":"轮播图","icon":"&amp;#xe6a8;","nav":["83","89"]},{"name":"友情链接","icon":"&amp;#xe6f7;","nav":["95"]},{"name":"网站留言","icon":"&amp;#xe69f;","nav":["22"]},{"name":"系统设置","icon":"&amp;#xe6ae;","nav":["40","35","114"]}]','0','基础建站-没有会员-没有评论-系统设置里面高级配置需要建站人员自己隐藏！','0','0');
+INSERT INTO `jz_layout` (`id`,`name`,`top_layout`,`left_layout`,`gid`,`ext`,`sys`,`isdefault`) VALUES ('5','新桌面','[]','[{"name":"内容管理","icon":"&amp;#xe6b4;","nav":["9","105"]},{"name":"栏目管理","icon":"&amp;#xe699;","nav":["42"]},{"name":"互动管理","icon":"&amp;#xe69b;","nav":["22","16"]},{"name":"SEO设置","icon":"&amp;#xe6b3;","nav":["147","95","153"]},{"name":"用户管理","icon":"&amp;#xe6b8;","nav":["2","118","123","54","49","66","129","177"]},{"name":"系统设置","icon":"&amp;#xe6ae;","nav":["40","70","190","83","89","114"]},{"name":"扩展管理","icon":"&amp;#xe6ce;","nav":["76","116","61","35","194","141","142","143","154","115"]}]','0','CMS默认配置，不可删除！','1','1');
 -- ----------------------------
 -- Records of jz_level
 -- ----------------------------
-INSERT INTO `jz_level` (`id`,`name`,`pass`,`tel`,`gid`,`email`,`regtime`,`logintime`,`status`) VALUES ('1','admin','0acdd3e4a8a2a1f8aa3ac518313dab9d','13600136000','1','123456@qq.com','1596372189','1596589384','1');
+INSERT INTO `jz_level` (`id`,`name`,`pass`,`tel`,`gid`,`email`,`regtime`,`logintime`,`status`) VALUES ('1','admin','0acdd3e4a8a2a1f8aa3ac518313dab9d','13600136000','1','123456@qq.com','1596372189','1606237527','1');
 -- ----------------------------
 -- Records of jz_level_group
 -- ----------------------------
@@ -687,6 +720,9 @@ INSERT INTO `jz_member` (`id`,`username`,`openid`,`pass`,`token`,`sex`,`gid`,`li
 -- Records of jz_member_group
 -- ----------------------------
 INSERT INTO `jz_member_group` (`id`,`name`,`description`,`paction`,`pid`,`isagree`,`iscomment`,`ischeckmsg`,`addtime`,`orders`,`discount`,`discount_type`) VALUES ('1','注册会员','前台会员分组，最低等级分组',',Message,Comment,User,Order,Home,Common,','0','1','1','1','0','0','0.00','0');
+-- ----------------------------
+-- Records of jz_menu
+-- ----------------------------
 -- ----------------------------
 -- Records of jz_message
 -- ----------------------------
@@ -748,7 +784,7 @@ INSERT INTO `jz_pictures` (`id`,`tid`,`aid`,`molds`,`path`,`filetype`,`size`,`li
 -- Records of jz_plugins
 -- ----------------------------
 INSERT INTO `jz_plugins` (`id`,`name`,`filepath`,`description`,`version`,`author`,`update_time`,`module`,`isopen`,`addtime`,`config`) VALUES ('1','生成多种尺寸的缩略图','imagethumbnail','上传图片的同时生成大、中、小三种大小的图片','1.4','留恋风2581047041@qq.com','1596384000','Admin','1','1596414913','{"id":"1","default_rate_x":455,"default_rate_y":290,"default_value_x":"","default_value_y":"","default_open":1,"tids_1":",6,7,2,4,","small_rate_x":"","small_rate_y":"","small_value_x":"","small_value_y":"","small_open":0,"large_rate_x":"","large_rate_y":"","large_value_x":"","large_value_y":"","large_open":0,"gif_open":1,"tids_2":"","tids_3":""}');
-INSERT INTO `jz_plugins` (`id`,`name`,`filepath`,`description`,`version`,`author`,`update_time`,`module`,`isopen`,`addtime`,`config`) VALUES ('2','系统API接口','apidata','实现API数据查询','1.3','留恋风2581047041@qq.com','1592928000','Home','1','1596589198','{"ischeckip":2,"iplist":"","key":"111222","tables":"article,product,sysconfig,classtype,collect"}');
+INSERT INTO `jz_plugins` (`id`,`name`,`filepath`,`description`,`version`,`author`,`update_time`,`module`,`isopen`,`addtime`,`config`) VALUES ('2','系统API接口','apidata','实现API数据查询','1.4','留恋风2581047041@qq.com','1596556800','Home','1','1606237572','{"ischeckip":2,"iplist":"","key":"111222","tables":"article,product,sysconfig,classtype,collect"}');
 -- ----------------------------
 -- Records of jz_power
 -- ----------------------------
@@ -935,4 +971,3 @@ INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('102',
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('103','更新cookie','Index/update_session_maxlifetime','32','0','1');
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('104','商品管理','Product','0','0','1');
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('105','商品列表','Product/productlist','104','1','1');
-INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('106','新增商品','Product/addproduct','104','0','1');

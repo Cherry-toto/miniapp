@@ -2,8 +2,9 @@
 MySQL Database Backup Tools
 Server:127.0.0.1:3306
 Database:www.mini.mm
-Data:2020-08-05 09:54:45
+Data:2020-11-25 01:06:41
 */
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('106','新增商品','Product/addproduct','104','0','1');
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('107','修改商品','Product/editproduct','104','0','1');
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('108','删除商品','Product/deleteproduct','104','0','1');
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('109','复制商品','Product/copyproduct','104','0','1');
@@ -87,10 +88,19 @@ INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('186',
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('187','修改友情链接分类','Links/linktypeedit','189','0','1');
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('188','删除友情链接分类','Links/linktypedelete','189','0','1');
 INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('189','友情链接','Links','0','0','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('190','导航设置','Index/menu','32','1','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('191','新增导航','Index/addmenu','32','0','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('192','修改导航','Index/editmenu','32','0','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('193','删除导航','Index/delmenu','32','0','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('194','碎片化','Sys/datacache','39','1','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('195','新增碎片','Sys/addcache','39','0','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('196','修改碎片','Sys/editcache','39','0','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('197','删除碎片','Sys/delcache','39','0','1');
+INSERT INTO `jz_ruler` (`id`,`name`,`fc`,`pid`,`isdesktop`,`sys`) VALUES ('198','预览SQL','Sys/viewcache','39','0','1');
 -- ----------------------------
 -- Records of jz_sysconfig
 -- ----------------------------
-INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('1','web_version','系统版号', NULL,'0','1.8.1');
+INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('1','web_version','系统版号', NULL,'0','1.9.1');
 INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('2','web_name','网站SEO名称', NULL,'0','极致资讯小程序');
 INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('3','web_keyword','网站SEO关键词', NULL,'0','极致资讯小程序');
 INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('4','web_desc','网站SEO描述', NULL,'0','极致资讯小程序');
@@ -204,14 +214,18 @@ INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('1
 INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('113','homelogo','首页简介logo', NULL,'1','/static/upload/202008033594.jpg');
 INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('114','homedes','首页简介des', NULL,'3','本站由极致CMS官方打造，一站式响应式模板，包含微信小程序，百度小程序。简单灵活方便，响应式设计，精美通用小程序，使其适用于更多行业！');
 INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('115','homeback','首页简介背景图', NULL,'1','/static/upload/202008039288.jpg');
+INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('116','search_words','前台搜索的字段','可以设置搜索表中的相关字段进行模糊查询,多个字段可用|分割','0','title');
+INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('117','closehomevercode','前台验证码','关闭后，登录注册不需要验证码','0','0');
+INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('118','closeadminvercode','后台验证码','关闭后，后台管理员登录不需要验证码','0','0');
+INSERT INTO `jz_sysconfig` (`id`,`field`,`title`,`tip`,`type`,`data`) VALUES ('119','tag_table','TAG包含模型','在tag列表上查询的相关模型,多个模型标识可用|分割,如：article|product','0','article|product');
 -- ----------------------------
 -- Records of jz_tags
 -- ----------------------------
-INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`) VALUES ('1','0','0','0','tags', NULL,'响应式', NULL, NULL,'-1','1','_blank','7','0', NULL,'0');
-INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`) VALUES ('2','0','0','0','tags', NULL,'博客', NULL, NULL,'-1','1','_blank','1','0', NULL,'0');
-INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`) VALUES ('3','0','0','0','tags', NULL,'小程序', NULL, NULL,'-1','1','_blank','4','0', NULL,'0');
-INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`) VALUES ('4','0','0','0','tags', NULL,'seo', NULL, NULL,'-1','1','_blank','3','0', NULL,'0');
-INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`) VALUES ('5','0','0','0','tags', NULL,'极致CMS', NULL, NULL,'-1','1','_blank','1','0', NULL,'0');
+INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`,`tags`) VALUES ('1','0','0','0','tags', NULL,'响应式', NULL, NULL,'-1','1','_blank','7','0', NULL,'0', NULL);
+INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`,`tags`) VALUES ('2','0','0','0','tags', NULL,'博客', NULL, NULL,'-1','1','_blank','1','0', NULL,'0', NULL);
+INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`,`tags`) VALUES ('3','0','0','0','tags', NULL,'小程序', NULL, NULL,'-1','1','_blank','4','0', NULL,'0', NULL);
+INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`,`tags`) VALUES ('4','0','0','0','tags', NULL,'seo', NULL, NULL,'-1','1','_blank','3','0', NULL,'0', NULL);
+INSERT INTO `jz_tags` (`id`,`tid`,`orders`,`comment_num`,`molds`,`htmlurl`,`keywords`,`newname`,`url`,`num`,`isshow`,`target`,`number`,`member_id`,`ownurl`,`addtime`,`tags`) VALUES ('5','0','0','0','tags', NULL,'极致CMS', NULL, NULL,'-1','1','_blank','1','0', NULL,'0', NULL);
 -- ----------------------------
 -- Records of jz_task
 -- ----------------------------

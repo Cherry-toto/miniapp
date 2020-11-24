@@ -20,7 +20,7 @@ class WechatController extends Controller
 {
 	public function _init(){
 		$webconf = webConf();
-		$template = get_template();
+		$template = TEMPLATE;
 		$this->webconf = $webconf;
 		$this->template = $template;
 		$classtypedata = classTypeData();
@@ -42,6 +42,26 @@ class WechatController extends Controller
 		}else{
 			$this->islogin = false;
 		}
+		
+		$jznav = getCache('jznav');
+		if(!$jznav){
+			$nav = M('menu')->findAll(['isshow'=>1]);
+			$jznav = [];
+			if($nav){
+				foreach($nav as $v){
+					$menulist = unserialize($v['nav']);
+					foreach($menulist as $vv){
+						if($vv['status']==1){
+							$vv['url'] = $vv['tid'] ? $this->classtypedata[$vv['tid']]['url'] : $vv['gourl'];
+							$vv['title'] = $vv['title'] ? $vv['title'] : ($vv['tid'] ? $this->classtypedata[$vv['tid']]['classname'] : '');
+							$jznav[$v['id']][]=$vv;
+						}
+					}
+				}
+			}
+			setCache('jznav',$jznav);
+		}
+		$this->jznav = $jznav;
 	}
 	
 	
@@ -223,7 +243,7 @@ class WechatController extends Controller
 					//获取用户信息，并存入数据库
 					$openid = $fromUsername;
 					//查询是否已有账号
-					
+					$openid = format_param($openid,1);
 					$islive = M('member')->find(array('openid'=>$openid));
 					if(!$islive){
 						$access_token = $this->getAccessToken();

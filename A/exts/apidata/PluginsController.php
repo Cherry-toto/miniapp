@@ -70,8 +70,16 @@ class PluginsController extends Controller {
 		$filepath = APP_PATH.'Home/plugins/GetDataController.php';
 		
 		if(version_compare($this->webconf['web_version'],'1.8.1','<=')){
-			$dir = APP_PATH.APP_HOME.'/exts/apidata/file';
-			copy($dir.'/Model.php',APP_PATH.'FrPHP/lib/Model.php');
+			if(defined('DB_TYPE')){
+				//sqlite
+				$dir = APP_PATH.APP_HOME.'/exts/apidata/file';
+				copy($dir.'/sqlite/Model.php',APP_PATH.'FrPHP/lib/Model.php');
+			}else{
+				//mysql
+				$dir = APP_PATH.APP_HOME.'/exts/apidata/file';
+				copy($dir.'/mysql/Model.php',APP_PATH.'FrPHP/lib/Model.php');
+			}
+			
 		}
 		
 		return true;

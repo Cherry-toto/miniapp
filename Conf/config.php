@@ -1,10 +1,10 @@
 <?php return array (
   'db' => 
   array (
-    'host' => 'localhost',
-    'dbname' => 'mini_jizhicms',
-    'username' => 'mini_jizhicms',
-    'password' => '3FYdfMD88rxpecsn',
+    'host' => '127.0.0.1',
+    'dbname' => 'www.mini.mm',
+    'username' => 'root',
+    'password' => 'root',
     'prefix' => 'jz_',
     'port' => '3306',
   ),
