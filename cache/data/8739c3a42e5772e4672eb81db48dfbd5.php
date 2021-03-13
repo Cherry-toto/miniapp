@@ -1,0 +1,1 @@
+<?php die();?>{"frcache_time":-1,"frcache_data":"127.0.0.1"}

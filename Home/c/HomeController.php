@@ -23,8 +23,12 @@ class HomeController extends CommonController
 	//首页
 	function index(){
 		//检查缓存
+		if(stripos(REQUEST_URI,'.php')!==false && REQUEST_URI!='/index.php'){
+			$this->error('链接错误！');
+		}
 		$url = current_url();
-		$cache_file = APP_PATH.'cache/data/'.md5(frencode($url));
+		$this->ishome = true;
+		$cache_file = APP_PATH.'cache/data/'.md5($url);
 		$this->cache_file = $cache_file;
 		$this->start_cache($cache_file);
 		$this->display($this->template.'/index');
@@ -46,9 +50,9 @@ class HomeController extends CommonController
 		if($url=='' || $url=='/' || $url=='index.php' || $url=='index'.File_TXT){
 			$this->index();exit;
 		}
-		
+		$this->ishome = false;
 		//检查缓存
-		$cache_file = APP_PATH.'cache/data/'.md5(frencode($url));
+		$cache_file = APP_PATH.'cache/data/'.md5($request_url);
 		$this->cache_file = $cache_file;
 		if(!$this->frparam('ajax')){
 			$this->start_cache($cache_file);
@@ -188,10 +192,20 @@ class HomeController extends CommonController
 				}
 				
 			}
-			
+			$children = $this->classtypedata[$res['id']]['children']['ids'];
+			$child = [];
+			foreach($children as $v){
+				if($this->classtypedata[$v]['gid']!=0){
+					if($this->islogin && $this->member['gid']>=$this->classtypedata[$v]['gid']){
+						$child[]=$v;
+					}
+				}else{
+					$child[]=$v;
+				}
+			}
 			$sql = ' isshow=1 ';
 			$molds = $res['molds'];
-			$sql .= ' and tid in ('.implode(',',$this->classtypedata[$res['id']]['children']['ids']).') ';
+			$sql .= ' and tid in ('.implode(',',$child).') ';
 			$page = new Page($molds);
 			
 			//手动设置分页条数
@@ -225,13 +239,14 @@ class HomeController extends CommonController
 				break;
 			}
 			$limit = $limit<=0 ? 15 : $limit;
+			$this->currentpage = $this->frpage;
 			$data = $page->where($sql)->orderby($orders)->limit($limit)->page($this->frpage)->go();
 			$pages = $page->pageList(5,'-');
 			
 			$this->pages = $pages;//组合分页
 			
 			foreach($data as $k=>$v){
-				if(isset($v['htmlurl']) && !isset($v['url'])){
+				if(!isset($v['url'])){
 					$data[$k]['url'] = gourl($v,$v['htmlurl']);
 				}
 				
@@ -282,7 +297,6 @@ class HomeController extends CommonController
 				JsonReturn(['code'=>0,'data'=>$data,'type'=>$res,'sum'=>$this->sum,'allpage'=>$this->allpage]);
 				
 			}
-			//面包屑导航
 			$classtypetree = array_reverse($this->classtypetree);
 			$isgo = false;
 			$newarray = [];
@@ -293,35 +307,34 @@ class HomeController extends CommonController
 					$isgo = true;
 					$res['level'] = $v['level'];
 					$newarray[]=$v;
-					if($v['level']==0){
-						break;
-					}
-					$parent = $this->classtypedata[$v['pid']];
-					continue;
 				}
-				
-				if($isgo){
-					if($parent['id']==$v['id']){
-						$res['level'] = $v['level'];
+				if($v['id']==$res['id'] && $v['level']==0){
+					break;
+				}
+				if($v['level']==0 && $v['id']!=$res['id'] && $v['id']!=$res['pid']){
+					if(!$istop && $isgo && $parent['level']!=0){
 						$newarray[]=$v;
-						if($parent['level']==0){
-							break;
-						}
-						$parent = $this->classtypedata[$v['pid']];
-						continue;
+						$istop = true;
 					}
-					
-					
-					
+					$isgo = false;
 				}
-	
+				if($isgo &&  $v['id']!=$res['id'] && $res['level']>$v['level'] ){
+					if(count($parent['pid'])){
+						if($parent['level']>$v['level'] && $parent['pid']!=$v['pid']){
+							$newarray[]=$v;
+					    	$parent = $v;
+						}
+					}else{
+						$newarray[]=$v;
+						$parent = $v;
+					}
+				}
 			}
 			$newarray2 = array_reverse($newarray);
 			$positions='<a href="'.get_domain().'">首页</a>';
 			foreach($newarray2 as $v){
 				$positions.='  &gt;  <a href="'.$v['url'].'">'.$v['classname'].'</a>';
 			}
-			
 			$this->positions_data = $newarray2;
 			$this->positions = $positions;
 			if(!$res['lists_html']){
@@ -418,17 +431,30 @@ class HomeController extends CommonController
 			
 		}
 		if($isclass){
+			
+			$children = $this->classtypedata[$res['id']]['children']['ids'];
+			$child = [];
+			foreach($children as $v){
+				if($this->classtypedata[$v]['gid']!=0){
+					if($this->islogin && $this->member['gid']>=$this->classtypedata[$v]['gid']){
+						$child[]=$v;
+					}
+				}else{
+					$child[]=$v;
+				}
+			}
 			$sql = ' isshow=1 ';
 			$molds = $res['molds'];
-			$sql .= ' and tid in ('.implode(',',$this->classtypedata[$res['id']]['children']['ids']).') ';
+			$sql .= ' and tid in ('.implode(',',$child).') ';
 			$page = new Page($molds);
+			
 			
 			//手动设置分页条数
 			$limit = $res['lists_num'];
 			if($this->frparam('limit')){
 				$limit = $this->frparam('limit');
 			}
-			
+			$this->currentpage = $this->frpage;
 			//只适合article和product
 			if($molds=='article' || $molds=='product'){
 				
@@ -516,16 +542,16 @@ class HomeController extends CommonController
 					}
 					$isgo = false;
 				}
-				if($isgo &&  $v['id']!=$res['id'] && $res['level']>$v['level']){
-					if(isset($parent['pid'])){
-						if($parent['level']!=$v['level']){
+				if($isgo &&  $v['id']!=$res['id'] && $res['level']>$v['level'] ){
+					if(count($parent['pid'])){
+						if($parent['level']>$v['level'] && $parent['pid']!=$v['pid']){
 							$newarray[]=$v;
+					    	$parent = $v;
 						}
-						
 					}else{
 						$newarray[]=$v;
+						$parent = $v;
 					}
-					$parent = $v;
 				}
 			}
 			$newarray2 = array_reverse($newarray);
@@ -533,9 +559,9 @@ class HomeController extends CommonController
 			foreach($newarray2 as $v){
 				$positions.='  &gt;  <a href="'.$v['url'].'">'.$v['classname'].'</a>';
 			}
-			
 			$this->positions_data = $newarray2;
 			$this->positions = $positions;
+			
 			if(!$res['lists_html']){
 				$lists_html = M('molds')->getField(['biaoshi'=>$this->type['molds']],'list_html');
 				$res['lists_html'] = str_replace('.html','',$lists_html);
@@ -568,8 +594,12 @@ class HomeController extends CommonController
 		if(!$id){
 			$this->error('缺少ID！');
 		}
+		if(isset($_SESSION['admin']) && $_SESSION['admin']['id']!=0){
+			$details = M($this->type['molds'])->find(array('id'=>$id,'tid'=>$this->type['id']));
+		}else{
+			$details = M($this->type['molds'])->find(array('id'=>$id,'isshow'=>1,'tid'=>$this->type['id']));
+		}
 		
-		$details = M($this->type['molds'])->find(array('id'=>$id,'isshow'=>1));
 		if(!$details){
 			$this->error('未找到相应内容！');
 			exit;
@@ -655,18 +685,16 @@ class HomeController extends CommonController
 				}
 				$isgo = false;
 			}
-			if($isgo &&  $v['id']!=$this->type['id'] && $this->type['level']>$v['level']){
-				
-				if(isset($parent['pid'])){
-					if($parent['level']!=$v['level']){
+			if($isgo &&  $v['id']!=$this->type['id'] && $this->type['level']>$v['level'] ){
+				if(count($parent['pid'])){
+					if($parent['level']>$v['level'] && $parent['pid']!=$v['pid']){
 						$newarray[]=$v;
+						$parent = $v;
 					}
-					
 				}else{
 					$newarray[]=$v;
+					$parent = $v;
 				}
-				$parent = $v;
-				
 			}
 		}
 		$newarray2 = array_reverse($newarray);
@@ -674,7 +702,6 @@ class HomeController extends CommonController
 		foreach($newarray2 as $v){
 			$positions.='  &gt;  <a href="'.$v['url'].'">'.$v['classname'].'</a>';
 		}
-		
 		$this->positions_data = $newarray2;
 		$this->positions = $positions;
 		
@@ -759,6 +786,7 @@ class HomeController extends CommonController
 			
 			$page = new Page($molds);
 			$page->typeurl = 'search';
+			$this->currentpage = $this->frparam('page',0,1);
 			$data = $page->where($sql)->orderby('id desc')->limit($this->frparam('limit',0,15))->page($this->frparam('page',0,1))->go();
 			$pages = $page->pageList(5,'&page=');
 			
@@ -878,13 +906,15 @@ class HomeController extends CommonController
 			$sqln = [];
 			foreach($allow_table as $v){
 				$list_a = M($v)->findAll($sql);
-				$sqlx[] = ' select id,tid,title,tags,keywords,molds,htmlurl,description,addtime,userid,member_id from '.DB_PREFIX.$v." where ".$sql;
+				$sqlx[] = ' select id,tid,litpic,title,tags,keywords,molds,htmlurl,description,addtime,userid,member_id from '.DB_PREFIX.$v." where ".$sql;
 				$sqln[] = ' select id from '.DB_PREFIX.$v." where ".$sql;
 			}
 			
 			$sql = implode(' union all ',$sqlx);
 			$sqln = implode(' union all ',$sqln);
 			$page = new Page();
+			$page->typeurl = 'search';
+			$this->currentpage = $this->frpage;
 			$data = $page->where($sql)->setPage(['limit'=>$this->frparam('limit',0,15)])->page($this->frpage)->goCount($sqln)->goSql();
 			foreach($data as $k=>$v){
 				$data[$k]['url'] = gourl($v,$v['htmlurl']);
@@ -927,7 +957,7 @@ class HomeController extends CommonController
 		$url = substr(REQUEST_URI,1);
 		$position = strpos($url, '?');
         $url = $position === false ? $url : substr($url, 0, $position);
-		$cache_file = APP_PATH.'cache/data/'.md5(frencode($url));
+		$cache_file = APP_PATH.'cache/data/'.md5(REQUEST_URI);
 		$this->cache_file = $cache_file;
 		$this->start_cache($cache_file);		
 		$r = M('customurl')->find(['url'=>$url]);
@@ -946,6 +976,7 @@ class HomeController extends CommonController
 			
 			exit;
 		}
+		header("HTTP/1.0 404");
 		$this->display($this->template.'/404');
 		$this->end_cache($this->cache_file);
 		exit;

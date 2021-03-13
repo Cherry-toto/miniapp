@@ -22,10 +22,7 @@ class ProductController extends CommonController
 	
 	function productlist(){
 		
-		$classtypedata = classTypeData();
-		foreach($classtypedata as $k=>$v){
-			$classtypedata[$k]['children'] = get_children($v,$classtypedata);
-		}
+		$classtypedata = $this->classtypedata;
 		$this->molds = M('molds')->find(['biaoshi'=>'product']);
 		$this->tid=  $this->frparam('tid');
 		$this->title = $this->frparam('title',1);
@@ -196,6 +193,11 @@ class ProductController extends CommonController
 				}
 				
 			}
+			if($this->admin['isadmin']==1 || ($this->admin['isadmin']!=1 && $this->admin['ischeck']==0)){
+				$data['isshow'] = $this->frparam('isshow',0,1);
+			}else{
+				$data['isshow'] = 0;
+			}
 			$r = M('product')->add($data);
 			if($r){
 				if($data['ownurl']){
@@ -325,6 +327,11 @@ class ProductController extends CommonController
 					
 				}else{
 					M('customurl')->delete(['molds'=>'product','aid'=>$this->frparam('id')]);
+				}
+				if($this->admin['isadmin']==1 || ($this->admin['isadmin']!=1 && $this->admin['ischeck']==0)){
+					$data['isshow'] = $this->frparam('isshow',0,1);
+				}else{
+					$data['isshow'] = 0;
 				}
 				if(M('product')->update(array('id'=>$this->frparam('id')),$data)){
 					//tags处理

@@ -207,11 +207,16 @@ class View
 		}else{
 			$prefix = '.html';
 		}
+		 if(defined('TPL_PATH')){
+			$path = TPL_PATH;
+		}else{
+			$path = APP_HOME;
+		}
 		if(APP_URL=='/index.php'){
-			$includefile = str_replace('//','/',APP_PATH . APP_HOME .'/'.HOME_VIEW.'/'.TEMPLATE.'/'.$filename. $prefix);
+			$includefile = str_replace('//','/',APP_PATH . $path .'/'.HOME_VIEW.'/'.TEMPLATE.'/'.$filename. $prefix);
 			$file = TEMPLATE.'/'.$filename. $prefix;
 		}else{
-			$includefile = str_replace('//','/',APP_PATH . APP_HOME .'/'.HOME_VIEW.'/'.Tpl_template.'/'. Tpl_common .'/'.$filename. $prefix);
+			$includefile = str_replace('//','/',APP_PATH . $path .'/'.HOME_VIEW.'/'.Tpl_template.'/'. Tpl_common .'/'.$filename. $prefix);
 			$file = Tpl_common .'/'.$filename. $prefix;
 		}
 		if(!is_file($includefile)){
@@ -334,15 +339,30 @@ class View
 			}
 			
 		}
-		if(isset($a['limit'])){$limit=$a['limit'];}else{$limit='null';}
+		if(isset($a['limit'])){
+			if(strpos($a['limit'],'$')!==false){
+				$limit=trim($a['limit'],"'");
+			}else{
+				$limit=$a['limit'];
+			}
+		}else{$limit='null';}
 		if(isset($a['notempty'])){$notempty=trim($a['notempty'],"'");}else{$notempty=false;}
 		if(isset($a['empty'])){$empty=trim($a['empty'],"'");}else{$empty=false;}
-		if(isset($a['fields'])){$fields=$a['fields'];}else{$fields='null';}
+		if(isset($a['fields'])){
+			if(strpos($a['fields'],'$')!==false){
+				$fields=trim($a['fields'],"'");
+			}else{
+				$fields=$a['fields'];
+			}
+			
+		}else{$fields='null';}
 		if(isset($a['isall'])){$isall=trim($a['isall'],"'");}else{$isall=false;}
 		if(isset($a['as'])){$as=$a['as'];}else{$as='v';}
 		if(isset($a['day'])){$day=$a['day'];}else{$day=false;}
 		if(isset($a['jzpage'])){$jzpage=trim($a['jzpage'],"'");}else{$jzpage='page';}
 		if(isset($a['sql'])){$sql=trim($a['sql'],"'");}else{$sql='';}
+		if(isset($a['jzcache'])){$jzcache=trim($a['jzcache'],"'");}else{$jzcache=false;}
+		if(isset($a['jzcachetime'])){$jzcachetime=trim($a['jzcachetime'],"'");}else{$jzcachetime=30*60;}
 		if(isset($a['orderby'])){
 			$order=$a['orderby'];
 			if(strpos($a['orderby'],'$')!==FALSE){$order=trim($a['orderby'],"'");}
@@ -404,13 +424,19 @@ class View
 		if($sql){
 			$sql = " and ('.".$sql.".' ) ";
 		}
-		unset($a['table']);unset($a['orderby']);unset($a['limit']);unset($a['as']);unset($a['like']);unset($a['fields']);unset($a['isall']);unset($a['notin']);unset($a['notempty']);unset($a['empty']);unset($a['day']);unset($a['in']);unset($a['sql']);unset($a['jzpage']);
+		unset($a['table']);unset($a['orderby']);unset($a['limit']);unset($a['as']);unset($a['like']);unset($a['fields']);unset($a['isall']);unset($a['notin']);unset($a['notempty']);unset($a['empty']);unset($a['day']);unset($a['in']);unset($a['sql']);unset($a['jzpage']);unset($a['jzcache']);unset($a['jzcachetime']);
 		$pages='';
 		$w = ' 1=1 ';
 		$ispage=false;
-		if(stripos($jzpage.'$')!==false){
-			$jzpage = "'.$jzpage.'";
+		if($jzpage!='page'){
+			if(stripos($jzpage,'$')!==false){
+				$jzpage = "'.$jzpage.'";
+			}
+			$pagenum = "\$pagenum = (int)\$_REQUEST['".$jzpage."'] ? (int)\$_REQUEST['".$jzpage."']  : 1; ";
+		}else{
+			$pagenum = "\$pagenum = \$frpage;";
 		}
+		
 		foreach($a as $k=>$v){
 			if(strpos($v,'$')===FALSE){
 				//$v = str_ireplace("'",'',$v);
@@ -521,9 +547,10 @@ class View
 		if($ispage){
 			
 			$txt .="
-			\$pagenum = (int)\$_REQUEST['".$jzpage."'] ? (int)\$_REQUEST['".$jzpage."']  : 1; 
+			".$pagenum."
 			\$".$as."_page = new FrPHP\Extend\Page(\$".$as."_table);
 			\$".$as."_page->typeurl = 'tpl';
+			\$".$as."_page->paged = '".$jzpage."';
 			\$".$as."_data = \$".$as."_page->where(\$".$as."_w)->fields(\$".$as."_fields)->orderby(\$".$as."_order)->limit(\$".$as."_limit)->page(\$pagenum)->go();
 			\$".$as."_pages = \$".$as."_page->pageList(3,'?".$jzpage."=');
 			\$".$as."_sum = \$".$as."_page->sum;
@@ -534,15 +561,26 @@ class View
 		}else{
 			
 			$txt .= "
-			$".$as."_data = M(\$".$as."_table)->findAll(\$".$as."_w,\$".$as."_order,\$".$as."_fields,\$".$as."_limit);";
+			if(\$jzcache){
+				\$cachestr = md5(\$".$as."_table.\$".$as."_w.\$".$as."_order.\$".$as."_fields.\$".$as."_limit);
+				\$cachedata = getCache(\$cachestr);
+				if(!\$cachedata){
+					$".$as."_data = M(\$".$as."_table)->findAll(\$".$as."_w,\$".$as."_order,\$".$as."_fields,\$".$as."_limit);
+					setCache(\$cachestr,\$".$as."_data,\$jzcachetime);
+				}
+			}else{
+				$".$as."_data = M(\$".$as."_table)->findAll(\$".$as."_w,\$".$as."_order,\$".$as."_fields,\$".$as."_limit);
+			}";
 			
 		}
 		$txt.='$'.$as.'_n=0;foreach($'.$as.'_data as $'.$as.'_key=> $'.$as.'){
 			$'.$as.'_n++;
-			if(isset($'.$as.'[\'htmlurl\']) && !isset($'.$as.'[\'url\'])){
+			if(!array_key_exists(\'url\',$'.$as.')){
 				
 				if($'.$as.'_table==\'classtype\'){
 					$'.$as.'[\'url\'] = $classtypedata[$'.$as.'[\'id\']][\'url\'];
+				}else if($'.$as.'_table==\'message\'){
+					$'.$as.'[\'url\'] = U(\'message/details\',[\'id\'=>$'.$as.'[\'id\']]);
 				}else{
 					$'.$as.'[\'url\'] = gourl($'.$as.',$'.$as.'[\'htmlurl\']);
 				}

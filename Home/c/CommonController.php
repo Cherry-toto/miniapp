@@ -27,17 +27,16 @@ class CommonController extends Controller
 		if($this->webconf['closeweb']){
 			$this->close();
 		}
-		
-		if(isset($_SESSION['terminal'])){
-			$classtypedata = $_SESSION['terminal']=='mobile' ? classTypeDataMobile() : classTypeData();
+		$m = 1;
+		if(isMobile() && $webconf['iswap']==1){
+			$classtypedata = classTypeDataMobile();
+			$m = 1;
 		}else{
-			$classtypedata = (isMobile() && $webconf['iswap']==1)?classTypeDataMobile():classTypeData();
+			$classtypedata = classTypeData();
+			$m = 0;
 		}
 		$this->classtypetree = $classtypedata;
-		foreach($classtypedata as $k=>$v){
-			$classtypedata[$k]['children'] = get_children($v,$classtypedata);
-		}
-		$this->classtypedata = $classtypedata;
+		$this->classtypedata = getclasstypedata($classtypedata,$m);
 		$this->common = Tpl_style.'common/';
 		$this->tpl = Tpl_style.$template.'/';
 		$this->frpage = $this->frparam('page',0,1);
@@ -865,6 +864,43 @@ class CommonController extends Controller
                     <label>'.$must.$v['tips'].'</label>
                 </div>';
 				break;
+				case 15:
+				$l .= '<div class="form-control">
+		            <label for="'.$v['field'].'">'.$v['fieldname'].'：</label>
+		            <span class="view_img_'.$v['field'].'">';
+		            if($data[$v['field']]){
+		            	foreach(explode('||',$data[$v['field']]) as $s){
+		            		if($s){
+								$l .= '<div class="form-control"><input name="'.$v['field'].'[]" type="text" value="'.$s.'"><button type="button" class="'.$v['field'].'_del">删除</button></div>';
+		            			 
+		            		}
+		            	}
+		           
+		            }
+		            $l .= '</span>
+		        </div>
+				<div class="form-control">
+		            <label ></label>
+					<button type="button" class="layui-btn" id="'.$v['field'].'_add">新增</button>
+					<label>'.$v['tips'].'</label>
+		        </div>
+				<script>
+				$(document).ready(function(){
+					$("#'.$v['field'].'_add").click(function(){
+						var html = \'<div class="form-control"><input type="text"  style="width:500px;" value="" name="'.$v['field'].'[]" autocomplete="off" ><button type="button" class="'.$v['field'].'_del" >删除</button></div>\';
+						
+						$(".view_img_'.$v['field'].'").append(html);
+						
+						
+					});
+					$(document).on("click",".'.$v['field'].'_del",function(){
+						$(this).parent().remove();
+					})
+					
+					
+				})
+				</script>';
+				break;
 			}
 			
 		}
@@ -887,10 +923,12 @@ class CommonController extends Controller
 		
 	
 	function jizhi(){
+		header("HTTP/1.0 404");
 		$this->display($this->template.'/404');
 		exit;
 	}
 	function error($msg){
+		header("HTTP/1.0 404");
 		$this->display($this->template.'/404');
 		exit;
 	}
@@ -904,11 +942,31 @@ class CommonController extends Controller
     }
 	
 	//递增递减
-	function gohits($id=0,$molds='article',$i=1){
-		$n = M($molds)->getField(['id'=>$id],'hits');
-		$num = $n+$i;
-		M($molds)->update(['id'=>$id],['hits'=>$num]);
-		JsonReturn(['code'=>0,'msg'=>'success','data'=>$num]);
+	function gohits(){
+		$id = $this->frparam('id');
+		$molds = strtolower($this->frparam('molds',1,'article'));
+		$moldslist = getCache('moldslist');
+		if(!$moldslist){
+			$list = M('molds')->findAll();
+			$moldslist = [];
+			foreach($list as $v){
+				$moldslist[]=$v['biaoshi'];
+			}
+			setCache('moldslist',$moldslist);
+		}
+		if(in_array($molds,$moldslist)){
+			$i = $this->frparam('num',0,1);
+			$n = M($molds)->getField(['id'=>$id],'hits');
+			$num = $n+$i;
+			M($molds)->update(['id'=>$id],['hits'=>$num]);
+			if($this->frparam('ajax')){
+				JsonReturn(['code'=>0,'msg'=>'success','data'=>$num]);
+			}else{
+				echo $num;
+			}
+		}
+		
+		
 	}
 
 }

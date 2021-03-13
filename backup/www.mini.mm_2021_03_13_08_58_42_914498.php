@@ -2,7 +2,7 @@
 MySQL Database Backup Tools
 Server:127.0.0.1:3306
 Database:www.mini.mm
-Data:2020-11-25 01:06:41
+Data:2021-03-13 08:58:42
 */
 SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
@@ -254,6 +254,7 @@ CREATE TABLE `jz_level_group` (
   `tids` text,
   `isagree` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1允许登录0不允许',
   `description` varchar(500) DEFAULT NULL,
+  `ischeck` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 -- ----------------------------
@@ -474,7 +475,7 @@ CREATE TABLE `jz_plugins` (
   `addtime` int(11) NOT NULL DEFAULT '0',
   `config` text COMMENT '配置',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- Table structure for jz_power
 -- ----------------------------
@@ -693,14 +694,14 @@ INSERT INTO `jz_layout` (`id`,`name`,`top_layout`,`left_layout`,`gid`,`ext`,`sys
 -- ----------------------------
 -- Records of jz_level
 -- ----------------------------
-INSERT INTO `jz_level` (`id`,`name`,`pass`,`tel`,`gid`,`email`,`regtime`,`logintime`,`status`) VALUES ('1','admin','0acdd3e4a8a2a1f8aa3ac518313dab9d','13600136000','1','123456@qq.com','1596372189','1606237527','1');
+INSERT INTO `jz_level` (`id`,`name`,`pass`,`tel`,`gid`,`email`,`regtime`,`logintime`,`status`) VALUES ('1','admin','0acdd3e4a8a2a1f8aa3ac518313dab9d','13600136000','1','123456@qq.com','1596372189','1615596876','1');
 -- ----------------------------
 -- Records of jz_level_group
 -- ----------------------------
-INSERT INTO `jz_level_group` (`id`,`name`,`isadmin`,`classcontrol`,`paction`,`tids`,`isagree`,`description`) VALUES ('1','超级管理员','1','0',',Fields,', NULL,'1', NULL);
-INSERT INTO `jz_level_group` (`id`,`name`,`isadmin`,`classcontrol`,`paction`,`tids`,`isagree`,`description`) VALUES ('2','网站管理员','0','0',',Member,Article,Comment,Message,Fields/get_fields,Index,Sys/index,Sys/loginlog,Sys/pictures,Sys/uploadcert,Sys/deletePic,Sys/deletePicAll,Sys/custom_del,Sys/email-order,Sys/payconfig,Sys/wechatbind,Classtype,Extmolds,Collect,Common,Product,Order,Wechat,', NULL,'1','网站管理员，客户使用分组，权限仅次于超级管理员。');
-INSERT INTO `jz_level_group` (`id`,`name`,`isadmin`,`classcontrol`,`paction`,`tids`,`isagree`,`description`) VALUES ('3','Blog','0','0',',Member,Article,Comment,Message,Fields/get_fields,Index/index,Index/welcome,Index/beifen,Index/backup,Index/huanyuan,Index/shanchu,Index/details,Index/desktop,Index/desktop_edit,Index/unicode,Index/update_session_maxlifetime,Index/cleanCache,Index/showlabel,Index/sitemap,Index/tohtml,Index/html_classtype,Index/html_molds,Sys/index,Sys/loginlog,Sys/pictures,Sys/uploadcert,Sys/deletePic,Sys/deletePicAll,Sys/custom_del,Classtype,Molds,Plugins,Links/index,Links/addlinks,Links/editlinks,Links/copylinks,Links/deletelinks,Links/deleteAll,Links/editOrders,Links/changeType,Links/copyAll,Links/editOrders,Links/linktype,Links/linktypeadd,Links/linktypeedit,Links/linktypedelete,Collect,Common,Common/uploads,Product,', NULL,'1','Blog角色-主要用户blog用户使用，比较简洁');
-INSERT INTO `jz_level_group` (`id`,`name`,`isadmin`,`classcontrol`,`paction`,`tids`,`isagree`,`description`) VALUES ('4','基础建站','0','0',',Article,Message,Fields/get_fields,Index/index,Index/welcome,Index/beifen,Index/backup,Index/huanyuan,Index/shanchu,Index/details,Index/update_session_maxlifetime,Index/cleanCache,Index/sitemap,Index/tohtml,Index/html_classtype,Index/html_molds,Sys/index,Sys/uploadcert,Classtype/index,Classtype/editclass,Classtype/editClassOrders,Classtype/change_status,Classtype/get_pinyin,Links/index,Links/addlinks,Links/editlinks,Links/copylinks,Links/deletelinks,Links/deleteAll,Links/editOrders,Links/changeType,Links/copyAll,Links/editOrders,Links/linktype,Links/linktypeadd,Links/linktypeedit,Links/linktypedelete,Collect,Common,Common/uploads,Product,', NULL,'1','基础建站，会员评论等功能模块去除');
+INSERT INTO `jz_level_group` (`id`,`name`,`isadmin`,`classcontrol`,`paction`,`tids`,`isagree`,`description`,`ischeck`) VALUES ('1','超级管理员','1','0',',Fields,', NULL,'1', NULL,'0');
+INSERT INTO `jz_level_group` (`id`,`name`,`isadmin`,`classcontrol`,`paction`,`tids`,`isagree`,`description`,`ischeck`) VALUES ('2','网站管理员','0','0',',Member,Article,Comment,Message,Fields/get_fields,Index,Sys/index,Sys/loginlog,Sys/pictures,Sys/uploadcert,Sys/deletePic,Sys/deletePicAll,Sys/custom_del,Sys/email-order,Sys/payconfig,Sys/wechatbind,Classtype,Extmolds,Collect,Common,Product,Order,Wechat,', NULL,'1','网站管理员，客户使用分组，权限仅次于超级管理员。','0');
+INSERT INTO `jz_level_group` (`id`,`name`,`isadmin`,`classcontrol`,`paction`,`tids`,`isagree`,`description`,`ischeck`) VALUES ('3','Blog','0','0',',Member,Article,Comment,Message,Fields/get_fields,Index/index,Index/welcome,Index/beifen,Index/backup,Index/huanyuan,Index/shanchu,Index/details,Index/desktop,Index/desktop_edit,Index/unicode,Index/update_session_maxlifetime,Index/cleanCache,Index/showlabel,Index/sitemap,Index/tohtml,Index/html_classtype,Index/html_molds,Sys/index,Sys/loginlog,Sys/pictures,Sys/uploadcert,Sys/deletePic,Sys/deletePicAll,Sys/custom_del,Classtype,Molds,Plugins,Links/index,Links/addlinks,Links/editlinks,Links/copylinks,Links/deletelinks,Links/deleteAll,Links/editOrders,Links/changeType,Links/copyAll,Links/editOrders,Links/linktype,Links/linktypeadd,Links/linktypeedit,Links/linktypedelete,Collect,Common,Common/uploads,Product,', NULL,'1','Blog角色-主要用户blog用户使用，比较简洁','0');
+INSERT INTO `jz_level_group` (`id`,`name`,`isadmin`,`classcontrol`,`paction`,`tids`,`isagree`,`description`,`ischeck`) VALUES ('4','基础建站','0','0',',Article,Message,Fields/get_fields,Index/index,Index/welcome,Index/beifen,Index/backup,Index/huanyuan,Index/shanchu,Index/details,Index/update_session_maxlifetime,Index/cleanCache,Index/sitemap,Index/tohtml,Index/html_classtype,Index/html_molds,Sys/index,Sys/uploadcert,Classtype/index,Classtype/editclass,Classtype/editClassOrders,Classtype/change_status,Classtype/get_pinyin,Links/index,Links/addlinks,Links/editlinks,Links/copylinks,Links/deletelinks,Links/deleteAll,Links/editOrders,Links/changeType,Links/copyAll,Links/editOrders,Links/linktype,Links/linktypeadd,Links/linktypeedit,Links/linktypedelete,Collect,Common,Common/uploads,Product,', NULL,'1','基础建站，会员评论等功能模块去除','0');
 -- ----------------------------
 -- Records of jz_link_type
 -- ----------------------------
@@ -784,7 +785,7 @@ INSERT INTO `jz_pictures` (`id`,`tid`,`aid`,`molds`,`path`,`filetype`,`size`,`li
 -- Records of jz_plugins
 -- ----------------------------
 INSERT INTO `jz_plugins` (`id`,`name`,`filepath`,`description`,`version`,`author`,`update_time`,`module`,`isopen`,`addtime`,`config`) VALUES ('1','生成多种尺寸的缩略图','imagethumbnail','上传图片的同时生成大、中、小三种大小的图片','1.4','留恋风2581047041@qq.com','1596384000','Admin','1','1596414913','{"id":"1","default_rate_x":455,"default_rate_y":290,"default_value_x":"","default_value_y":"","default_open":1,"tids_1":",6,7,2,4,","small_rate_x":"","small_rate_y":"","small_value_x":"","small_value_y":"","small_open":0,"large_rate_x":"","large_rate_y":"","large_value_x":"","large_value_y":"","large_open":0,"gif_open":1,"tids_2":"","tids_3":""}');
-INSERT INTO `jz_plugins` (`id`,`name`,`filepath`,`description`,`version`,`author`,`update_time`,`module`,`isopen`,`addtime`,`config`) VALUES ('2','系统API接口','apidata','实现API数据查询','1.4','留恋风2581047041@qq.com','1596556800','Home','1','1606237572','{"ischeckip":2,"iplist":"","key":"111222","tables":"article,product,sysconfig,classtype,collect"}');
+INSERT INTO `jz_plugins` (`id`,`name`,`filepath`,`description`,`version`,`author`,`update_time`,`module`,`isopen`,`addtime`,`config`) VALUES ('2','系统API接口','apidata','实现API数据查询','1.5','留恋风2581047041@qq.com','1611849600','Home','1','1615596894','{"ischeckip":2,"iplist":"","key":"111222","tables":"article,product,sysconfig,classtype,collect"}');
 -- ----------------------------
 -- Records of jz_power
 -- ----------------------------

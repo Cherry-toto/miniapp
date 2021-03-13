@@ -80,14 +80,24 @@ class ClasstypeController extends CommonController
 			$w['details_html'] = $this->frparam('details_html',1);
 			$w['gourl'] = $this->frparam('gourl',1);
 			$w['lists_num'] = $this->frparam('lists_num');
-			if($w['lists_html']=='' && $w['details_html']==''){
+			
+			if($w['pid']){
 				$parent = M('classtype')->find(array('id'=>$w['pid']));
 				if($parent['iscover']==1){
-					$w['lists_html']=$parent['lists_html'];
-					$w['details_html']=$parent['details_html'];
+					$w['lists_html']= $w['lists_html'] ? $w['lists_html'] : ($this->frparam('lists_html_write',1) ? $this->frparam('lists_html_write',1) : $parent['lists_html']);
+					$w['details_html']= $w['details_html'] ? $w['details_html'] : ($this->frparam('details_html_write',1) ? $this->frparam('details_html_write',1) : $parent['details_html']);
 					$w['lists_num']=$parent['lists_num'];
+				}else{
+					$w['lists_html']= $w['lists_html'] ? $w['lists_html'] : $this->frparam('lists_html_write',1);
+					$w['details_html']= $w['details_html'] ? $w['details_html'] : $this->frparam('details_html_write',1);
 				}
+			}else{
+				$w['lists_html']= $w['lists_html'] ? $w['lists_html'] : $this->frparam('lists_html_write',1);
+				$w['details_html']= $w['details_html'] ? $w['details_html'] : $this->frparam('details_html_write',1);
 			}
+			
+			$w['lists_html'] = str_ireplace('.html','',$w['lists_html']);
+			$w['details_html'] = str_ireplace('.html','',$w['details_html']);
 			
 			
 			$data = $this->frparam();
@@ -108,6 +118,8 @@ class ClasstypeController extends CommonController
 				setCache('classtypetree',null);
 				setCache('classtype',null);
 				setCache('mobileclasstype',null);
+				setCache('classtypedatamobile',null);
+				setCache('classtypedatapc',null);
 				JsonReturn(array('status'=>1,'info'=>'添加栏目成功，继续添加~','url'=>U('addclass',array('pid'=>$w['pid'],'biaoshi'=>$w['molds']))));
 			}else{
 				JsonReturn(array('status'=>0,'info'=>'新增失败！'));
@@ -118,10 +130,7 @@ class ClasstypeController extends CommonController
 		
 		$this->pid = $this->frparam('pid');
 		$this->biaoshi = $this->frparam('biaoshi',1);
-		//$classtype = M('classtype')->findAll(null,'orders desc');
-		//$classtype = getTree($classtype);
 		$this->classtypes = $this->classtypetree;
-			//var_dump($this->classtypes);
 		$this->display('classtype-add');
 		
 	}
@@ -151,11 +160,12 @@ class ClasstypeController extends CommonController
 			$w['body'] = $this->frparam('body',4);
 			$w['htmlurl'] = $htmlurl;
 			$w['iscover'] = $this->frparam('iscover');
-			$w['lists_html'] = $this->frparam('lists_html',1);
-			$w['details_html'] = $this->frparam('details_html',1);
+			$w['lists_html'] = $this->frparam('lists_html',1) ? $this->frparam('lists_html',1) : $this->frparam('lists_html_write',1);
+			$w['details_html'] = $this->frparam('details_html',1) ? $this->frparam('details_html',1) : $this->frparam('details_html_write',1);
 			$w['lists_num'] = $this->frparam('lists_num');
 			$w['gourl'] = $this->frparam('gourl',1);
-			
+			$w['lists_html'] = str_ireplace('.html','',$w['lists_html']);
+			$w['details_html'] = str_ireplace('.html','',$w['details_html']);
 			
 			
 			$data = $this->frparam();
@@ -222,6 +232,8 @@ class ClasstypeController extends CommonController
 				setCache('classtypetree',null);
 				setCache('classtype',null);
 				setCache('mobileclasstype',null);
+				setCache('classtypedatamobile',null);
+				setCache('classtypedatapc',null);
 				JsonReturn(array('status'=>1));
 			}else{
 				JsonReturn(array('status'=>0,'info'=>'您未做任何修改，不能提交！'));
@@ -230,9 +242,6 @@ class ClasstypeController extends CommonController
 		
 		//模块
 		$this->molds = M('Molds')->findAll(['isopen'=>1]);
-		//$classtype = M('classtype')->findAll(null,'orders desc');
-		//$classtype = getTree($classtype);
-	
 		$this->classtypes = $this->classtypetree;
 		$this->display('classtype-edit');
 		
@@ -248,6 +257,8 @@ class ClasstypeController extends CommonController
 		setCache('classtypetree',null);
 		setCache('classtype',null);
 		setCache('mobileclasstype',null);
+		setCache('classtypedatamobile',null);
+		setCache('classtypedatapc',null);
 		JsonReturn(array('code'=>0,'info'=>'修改成功！'));
 		
 	}
@@ -264,6 +275,8 @@ class ClasstypeController extends CommonController
 				setCache('classtypetree',null);
 				setCache('classtype',null);
 				setCache('mobileclasstype',null);
+				setCache('classtypedatamobile',null);
+				setCache('classtypedatapc',null);
 				JsonReturn(array('status'=>1));
 			}else{
 				JsonReturn(array('status'=>0,'info'=>'删除失败！'));
@@ -287,6 +300,8 @@ class ClasstypeController extends CommonController
 		setCache('classtypetree',null);
 		setCache('classtype',null);
 		setCache('mobileclasstype',null);
+		setCache('classtypedatamobile',null);
+		setCache('classtypedatapc',null);
 	}
 	
 	function get_pinyin(){
@@ -319,7 +334,9 @@ class ClasstypeController extends CommonController
 					}
 					$w['molds'] = $molds;
 					$w['classname'] = $d[0];
+					$w['seo_classname'] = $d[0];
 					$w['pid'] = $pid;
+					$d[1] = str_replace(' ','-',$d[1]);
 					if($this->webconf['islevelurl'] && $w['pid']!=0){
 						//层级
 						$html = $classtypetree[$w['pid']]['htmlurl'].'/'.$d[1];
@@ -329,7 +346,7 @@ class ClasstypeController extends CommonController
 					if(stripos($html,'.php')!==false){
 						JsonReturn(array('code'=>1,'info'=>'非法URL'));
 					}
-					$w['htmlurl'] = $html;
+					$w['htmlurl'] = str_replace(' ','-',$html);
 					$w['lists_num'] = $this->frparam('lists_num',0,10);
 					$w['lists_html'] = $this->frparam('lists_html',1);
 					$w['details_html'] = $this->frparam('details_html',1);
@@ -344,6 +361,8 @@ class ClasstypeController extends CommonController
 			setCache('classtypetree',null);
 			setCache('classtype',null);
 			setCache('mobileclasstype',null);
+			setCache('classtypedatamobile',null);
+			setCache('classtypedatapc',null);
 			JsonReturn(['code'=>0,'msg'=>'success']);
 		}
 		$this->molds = M('molds')->find(['biaoshi'=>'classtype']);
@@ -441,8 +460,8 @@ class ClasstypeController extends CommonController
 					$new_htmlurl = $htl_new;
 				}
 				//更新栏目及其内容HTML
-				M('classtype')->update(['id'=>$v],['htmlurl'=>$new_htmlurl]);
-				M($classtypetree[$v]['molds'])->update(array('tid'=>$v),array('htmlurl'=>$new_htmlurl,'pid'=>$pid));
+				M('classtype')->update(['id'=>$v],['htmlurl'=>$new_htmlurl,'pid'=>$pid]);
+				M($classtypetree[$v]['molds'])->update(array('tid'=>$v),array('htmlurl'=>$new_htmlurl,'tid'=>$pid));
 				
 				foreach($children as $vv){
 					$html = substr($vv['htmlurl'],strlen($old_htmlurl));
@@ -461,6 +480,8 @@ class ClasstypeController extends CommonController
 		setCache('classtypetree',null);
 		setCache('classtype',null);
 		setCache('mobileclasstype',null);
+		setCache('classtypedatamobile',null);
+		setCache('classtypedatapc',null);
 		JsonReturn(array('code'=>0,'msg'=>'操作成功！'));
 	}
 	

@@ -127,7 +127,11 @@
 			   </div>
 		 {/if}
 		    {if(checkAction('Product/addproduct'))}
+			{if($tid)}
+				<a class="layui-btn layui-btn-sm" onclick="x_admin_show('新增{$molds['name']}','{fun U('Product/addproduct',['tid'=>$tid])}')">新增{$molds['name']}</a>
+			{else}
 			   <a class="layui-btn layui-btn-sm" onclick="x_admin_show('新增{$molds['name']}','{fun U('Product/addproduct')}')">新增{$molds['name']}</a>
+			{/if}
 			{/if}  
 			
 		 </div>
@@ -205,11 +209,12 @@
 				  {/if}
 				  {foreach $fields_list as $v},{field: '{$v['field']}', title: '{$v['fieldname']}' {if($v['fieldtype']==1 || $v['fieldtype']==2)},edit:'text'{/if} }{/foreach}
 				  ,{field: 'orders', title: '排序', width: 60, edit:'text'}
+				  ,{field: 'hits', title: '点击', width: 60, edit:'text'}
 				  ,{field: 'tuijian', title: '推荐',width: 60, templet: '#tuijian'}
 				  ,{field: 'new_isshow', title: '审核',width:100, templet: '#isshow'}
 				  ,{field: 'new_addtime', width:160,title: '时间'}
 				  {if(checkAction('Article/editarticle') || checkAction('Article/deletearticle') || checkAction('Article/copyarticle'))}
-				  ,{field: '', title: '操作',width:200, toolbar: '#rightbar', fixed:'right'}
+				  ,{field: '', title: '操作',width:240, toolbar: '#rightbar', fixed:'right'}
 				  {/if}
 				 
 				]]

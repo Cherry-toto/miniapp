@@ -20,7 +20,6 @@ class FieldsController extends CommonController
 {
 	
 	function index(){
-		$page = new Page('Fields');
 		$sql = '1=1';
 		if($this->frparam('molds',1)==''){
 			Error('请选择模块！');
@@ -28,11 +27,10 @@ class FieldsController extends CommonController
 		
 		$sql = ['molds'=>$this->frparam('molds',1)];
 		$this->molds = M('Molds')->find(array('biaoshi'=>$this->frparam('molds',1)));
-		$data = $page->where($sql)->orderby('orders desc,id asc')->page($this->frparam('page',0,1))->go();
-		$pages = $page->pageList();
-		$this->pages = $pages;
+		$this->pages = '';
+		$data = M('fields')->findAll(array('molds'=>$this->frparam('molds',1)));
 		$this->lists = $data;
-		$this->sum = $page->sum;
+		$this->sum = count($data);
 		
 		$this->display('fields-list');
 		
@@ -85,6 +83,8 @@ class FieldsController extends CommonController
 				break;
 				case 3:
 				case 15:
+				case 6:
+				case 10:
 				$sql .= "TEXT CHARACTER SET utf8 default ";
 				$sql .= ' NULL ';
 				
@@ -120,15 +120,7 @@ class FieldsController extends CommonController
 					$sql .= " NULL ";
 				}
 				break;
-				case 6:
-				case 10:
-				$sql .= "VARCHAR(".$data['fieldlong'].") CHARACTER SET utf8 default ";
-				if($data['vdata']){
-					$sql .=  "'".$data['vdata']."'";
-				}else{
-					$sql .= " NULL ";
-				}
-				break;
+			
 				case 7:
 				case 8:
 				case 12:
@@ -260,6 +252,8 @@ class FieldsController extends CommonController
 					break;
 					case 3:
 					case 15:
+					case 6:
+					case 10:
 					$sql .= "TEXT CHARACTER SET utf8 default ";
 					$sql .= ' NULL ';
 					
@@ -306,15 +300,7 @@ class FieldsController extends CommonController
 						$sql .= ' NULL ';
 					}
 					break;
-					case 6:
-					case 10:
-					$sql .= "VARCHAR(".$data['fieldlong'].") CHARACTER SET utf8 default ";
-					if($data['vdata']){
-						$sql .=  "'".$data['vdata']."'";
-					}else{
-						$sql .= ' NULL ';
-					}
-					break;
+					
 					case 7:
 					case 8:
 					case 12:
@@ -369,10 +355,8 @@ class FieldsController extends CommonController
 		$sql = array();
 		$molds = strtolower($this->frparam('molds',1));
 		$moldsdata = M('molds')->find(['biaoshi'=>$molds]);
-		if($moldsdata['ismust']!=1 || in_array($molds,['tags','message','comment','orders','admin','collect_type','fields','buylog','link_type','links','layout','level_group','level','member_group','molds','pictures','plugins','power','ruler','sysconfig','task','collect','member','menu'])){
-			if($tid!=0){
-				$sql[] = " tids like '%,".$tid.",%' "; 
-			}
+		if($moldsdata['ismust']!=1 || in_array($molds,['tags','comment','orders','admin','collect_type','fields','buylog','link_type','links','layout','level_group','level','member_group','molds','pictures','plugins','power','ruler','sysconfig','task','collect','member','menu'])){
+			
 		}else{
 			$sql[] = " tids like '%,".$tid.",%' "; 
 		}
@@ -401,8 +385,8 @@ class FieldsController extends CommonController
 				}
                 $l .= $v['fieldname'].'
                     </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="'.$v['field'].'" style="width:500px;" value="'.$data[$v['field']].'" name="'.$v['field'].'" ';
+                    <div class="layui-input-inline"  style="width:500px;">
+                        <input type="text" id="'.$v['field'].'" value="'.$data[$v['field']].'" name="'.$v['field'].'" ';
 				if($v['ismust']==1){
 					$l.=' required="" lay-verify="required" ';
 				}		
@@ -447,7 +431,7 @@ class FieldsController extends CommonController
 				}
                 $l .= $v['fieldname'].'
                     </label>
-                    <div class="layui-input-block">
+                    <div class="layui-input-inline">
                         <input type="number" id="'.$v['field'].'" value="'.$data[$v['field']].'" name="'.$v['field'].'" ';
 				if($v['ismust']==1){
 					$l.=' required="" lay-verify="required" ';
@@ -894,7 +878,7 @@ layui.use("laydate", function(){
 				if($data[$v['field']]){
 					$rs = explode('||',$data[$v['field']]);
 					foreach($rs as $vv){
-						$l.='<div class="layui-input-block"><input type="text"  style="width:500px;" value="'.$vv.'" name="'.$v['field'].'[]" autocomplete="off" class="layui-input layui-input-inline"><button type="button" class="layui-btn layui-btn-danger layui-btn-sm  layui-input-inline" id="'.$v['field'].'_del">删除</button></div>';
+						$l.='<div class="layui-input-block"><input type="text"  style="width:500px;" value="'.$vv.'" name="'.$v['field'].'[]" autocomplete="off" class="layui-input layui-input-inline"><button type="button" class="layui-btn layui-btn-danger layui-btn-sm  layui-input-inline '.$v['field'].'_del" >删除</button></div>';
 					}
 				}else{
 					$l .='<div class="layui-input-block">
@@ -910,13 +894,13 @@ layui.use("laydate", function(){
 				<script>
 				$(document).ready(function(){
 					$("#'.$v['field'].'_add").click(function(){
-						var html = \'<div class="layui-input-block"><input type="text"  style="width:500px;" value="" name="'.$v['field'].'[]" autocomplete="off" class="layui-input layui-input-inline"><button type="button" class="layui-btn layui-btn-danger layui-btn-sm  layui-input-inline" id="'.$v['field'].'_del">删除</button></div>\';
+						var html = \'<div class="layui-input-block"><input type="text"  style="width:500px;" value="" name="'.$v['field'].'[]" autocomplete="off" class="layui-input layui-input-inline"><button type="button" class="layui-btn layui-btn-danger layui-btn-sm  layui-input-inline '.$v['field'].'_del" >删除</button></div>\';
 						
 						$("#'.$v['field'].'_space").append(html);
 						
 						
 					});
-					$(document).on("click","#'.$v['field'].'_del",function(){
+					$(document).on("click",".'.$v['field'].'_del",function(){
 						$(this).parent().remove();
 					})
 					

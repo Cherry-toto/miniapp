@@ -23,10 +23,7 @@ class ArticleController extends CommonController
 	//内容管理
 	function articlelist(){
 		$page = new Page('Article');
-		$classtypedata = classTypeData();
-		foreach($classtypedata as $k=>$v){
-			$classtypedata[$k]['children'] = get_children($v,$classtypedata);
-		}
+		$classtypedata = $this->classtypedata;
 		$this->fields_list = M('Fields')->findAll(array('molds'=>'article','islist'=>1),'orders desc');
 		$this->isshow = $this->frparam('isshow');
 		$this->tid=  $this->frparam('tid');
@@ -215,6 +212,13 @@ class ArticleController extends CommonController
 				}
 				
 			}
+			
+			if($this->admin['isadmin']==1 || ($this->admin['isadmin']!=1 && $this->admin['ischeck']==0)){
+				$data['isshow'] = $this->frparam('isshow',0,1);
+			}else{
+				$data['isshow'] = 0;
+			}
+			
 			$r = M('Article')->add($data);
 			if($r){
 				if($data['ownurl']){
@@ -366,7 +370,11 @@ class ArticleController extends CommonController
 				}else{
 					M('customurl')->delete(['molds'=>'article','aid'=>$this->frparam('id')]);
 				}
-				
+				if($this->admin['isadmin']==1 || ($this->admin['isadmin']!=1 && $this->admin['ischeck']==0)){
+					$data['isshow'] = $this->frparam('isshow',0,1);
+				}else{
+					$data['isshow'] = 0;
+				}
 				if(M('Article')->update(array('id'=>$this->frparam('id')),$data)){
 					if($old_tags!=$data['tags']){
 						

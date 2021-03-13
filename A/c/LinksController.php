@@ -21,10 +21,7 @@ class LinksController extends CommonController
 	
 	public function index(){
 		
-		$classtypedata = classTypeData();
-		foreach($classtypedata as $k=>$v){
-			$classtypedata[$k]['children'] = get_children($v,$classtypedata);
-		}
+		$classtypedata = $this->classtypedata;
 		$molds = 'links';
 		if($molds==''){
 			Error('模块为空，请选择模块！');
@@ -102,10 +99,7 @@ class LinksController extends CommonController
 			
 			$data = $this->frparam();
 			$data['tid'] = $this->frparam('tid',0,0);
-			if($data['tid']){
-				$pclass = get_info_table('classtype',array('id'=>$data['tid']));
-				$data['htmlurl'] = $pclass['htmlurl'];
-			}
+			
 			
 			$data = get_fields_data($data,$molds);
 			
@@ -148,10 +142,7 @@ class LinksController extends CommonController
 			
 			$data = $this->frparam();
 			$data['tid'] = $this->frparam('tid',0,0);
-			if($data['tid']){
-				$pclass = get_info_table('classtype',array('id'=>$data['tid']));
-				$data['htmlurl'] = $pclass['htmlurl'];
-			}
+			
 			$data = get_fields_data($data,$molds);
 			if($this->frparam('id')){
 				

@@ -60,6 +60,10 @@ class GetDataController extends CommonController
 			if($page>1){
 			    $limit = ($page-1)*$limit.','.$limit;
 			}
+			if($model=='sysconfig'){
+				$limit = null;
+			}
+			
 			$data = $this->frparam();
 			unset($data['model']);
 			unset($data['orders']);

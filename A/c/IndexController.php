@@ -150,9 +150,17 @@ class IndexController extends CommonController
 		$this->article_num = M('article')->getCount();
 		$this->product_num = M('product')->getCount();
 		$this->message_num = M('message')->getCount();
-        $classtypedata = (isMobile() && $this->webconf['iswap']==1)?classTypeDataMobile():classTypeData();
-        $this->classtypedata = $classtypedata;
-		$this->display('welcome');
+		if(defined('TPL_PATH')){
+			$path = TPL_PATH;
+		}else{
+			$path = APP_HOME;
+		}
+		$includefile = str_replace('//','/',APP_PATH . $path .'/'.HOME_VIEW.'/'.Tpl_template.'/custom.html');
+		if(file_exists($includefile)){
+			$this->display('custom');
+		}else{
+			$this->display('welcome');
+		}
 	}
 	
 	function beifen(){
@@ -431,7 +439,7 @@ class IndexController extends CommonController
 	 //更新session的过期时间
     function update_session_maxlifetime(){
 	  $cache_time = (int)webConf('cache_time');
-	  $cache_time = $cache_time==0 ? 600 : $cache_time;
+	  $cache_time = $cache_time==0 ? 7200 : $cache_time;
 	  setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + $cache_time);
 	  
     }
@@ -672,9 +680,8 @@ class IndexController extends CommonController
 			$mobile_html = trim($mobile_html);
 			
 			 $classtypedataMobile = classTypeDataMobile();
-			 foreach($classtypedataMobile as $k=>$v){
-				$classtypedataMobile[$k]['children'] = get_children($v,$classtypedataMobile);
-			 }
+			 $classtypedataMobile = getclasstypedata($classtypedataMobile,1);
+			 
 			foreach($model as $k=>$v){
 				if($isshow[$k]==1){
 					$list = M($v)->findAll(['isshow'=>1]);
@@ -786,7 +793,6 @@ class IndexController extends CommonController
 		
 		$maxlimit = 500;
 		$sleep = 2;//最小填0，立即跳转。
-
 		if($_POST){
 			$_SESSION['terminal'] = $this->frparam('terminal',1,'pc');
 			$terminal_path = $_SESSION['terminal']=='pc' ? $this->webconf['pc_html'] : $this->webconf['mobile_html'];
@@ -797,16 +803,9 @@ class IndexController extends CommonController
 			if($this->frparam('clearhtml')){
 				setCache('clearhtml',1);
 			}
-			
-			if(isset($_SESSION['terminal'])){
-				$classtypedata = $_SESSION['terminal']=='mobile' ? classTypeDataMobile() : classTypeData();
-			}else{
-				$classtypedata = (isMobile() && $webconf['iswap']==1)?classTypeDataMobile():classTypeData();
-			}
-		
-			foreach($classtypedata as $k=>$v){
-				$classtypedata[$k]['children'] = get_children($v,$classtypedata);
-			}
+
+			$classtypedata = $this->classtypedata;
+
 			//echo '提交成功！';
 			if($type==1){
 				//有选择的更新HTML
@@ -846,7 +845,7 @@ class IndexController extends CommonController
 						$urls = $this->html_molds($model,$sql);
 						$urls[]= ['url'=>$www,'html'=>APP_PATH.$terminal_path.'index.html'];
 						setCache('tohtmlurl',$urls,86400);
-						//$_SESSION['terminal'] = null;
+						
 						JsonReturn(['code'=>0,'msg'=>'success']);
 						exit;
 					break;
@@ -893,7 +892,7 @@ class IndexController extends CommonController
 					}
 					$urls[]= ['url'=>$www,'html'=>APP_PATH.$terminal_path.'index.html'];
 					setCache('tohtmlurl',$urls,86400);
-					//$_SESSION['terminal'] = null;
+					
 					JsonReturn(['code'=>0,'msg'=>'success','urls'=>$urls]);
 					exit;
 					
@@ -915,14 +914,7 @@ class IndexController extends CommonController
 
 			$clearhtml = getCache('clearhtml');
 
-			$opts = array(
-			  'http'=>array(
-				'method'=>"GET",
-				'header'=>"Cookie: PHPSESSID=".$_COOKIE['PHPSESSID']."\r\n"
-			  )
-			);
-
-			$context = stream_context_create($opts);
+			
 			$max = count($tohtmlurl);
 			$start_time = getCache('start_time');
 			if(!$start_time){
@@ -951,12 +943,15 @@ class IndexController extends CommonController
 
 
 					}else{
-						$data = curl_http($value['url']);
+						if($_SESSION['terminal']=='pc'){
+							$data = curl_http($value['url']);
+						}else{
+							$data = $this->mhtml($value['url']);
+						}
+						
 						$f = @fopen($value['html'],'w');
-						//$r = @fwrite($f,file_get_contents($value['url'],false,$context));
 						$r = @fwrite($f,$data);
 						@fclose($f);
-						//$r = file_put_contents($value['html'],file_get_contents($value['url'],false,$context));
 						if(!$r){
 							echo $value['html'].'生成失败！<br/>';
 						}else{
@@ -983,6 +978,37 @@ class IndexController extends CommonController
 			if($count>=$max){
 				setCache('tohtmlurl',false);
 				if($clearhtml){
+					
+					$terminal_path = $_SESSION['terminal']=='pc' ? $this->webconf['pc_html'] : $this->webconf['mobile_html'];
+					$terminal_path = ($terminal_path=='' || $terminal_path=='/') ? '' : $terminal_path.'/';
+					$notpath = ['/','a','public','home','frphp','cache','conf','backup','static'];
+					foreach($this->classtypedata as $vv){
+						$path = strtolower($vv['htmlurl']);
+						
+						if($vv['htmlurl'] && !in_array($path,$notpath) && strpos($path,'.')===false){
+							$this->removeDir(APP_PATH.$terminal_path.$vv['htmlurl']);
+							
+							//检查分页
+							$sql = 'tid in('.implode(",",$this->classtypedata[$vv['id']]["children"]["ids"]).') ';
+							$count = M($vv['molds'])->getCount($sql);
+							$pagenum = ceil($count/$vv['lists_num']);
+							if($pagenum>1){
+								for($i=1;$i<=$pagenum;$i++){
+									$filename = $vv['htmlurl'].'-'.$i;
+									if(file_exists(APP_PATH.$terminal_path.$filename)){
+										rmdir(APP_PATH.$terminal_path.$filename);
+									}
+									
+								}
+								
+							}
+					
+							
+							
+						}
+						
+					}
+					
 					echo '静态HTML页面已全部清理完毕！<br/>';
 					$end_time = time();
 					$start_time = getCache('start_time');
@@ -1016,23 +1042,48 @@ class IndexController extends CommonController
 		$this->display('tohtml');
 	}
 	
-	
+	function removeDir($dirName) 
+	{ 
+		if(! is_dir($dirName)) 
+		{ 
+			return false; 
+		} 
+		$handle = @opendir($dirName); 
+		while(($file = @readdir($handle)) !== false) 
+		{ 
+			if($file != '.' && $file != '..') 
+			{ 
+				$dir = $dirName . '/' . $file; 
+				is_dir($dir) ? $this->removeDir($dir) : @unlink($dir); 
+			} 
+		} 
+		closedir($handle); 
+		  
+		return rmdir($dirName) ; 
+	} 
+	function mhtml($url){
+		$ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL,$url);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        $h=array('User-Agent:Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
+        'HTTP_ACCEPT:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8');
+        curl_setopt($ch,CURLOPT_HTTPHEADER,$h);
+        $data = curl_exec($ch);
+        curl_close($ch);
+		
+		return $data;
+	}
 	function html_classtype($sql,$limit=null){
 		$terminal_path = $_SESSION['terminal']=='pc' ? $this->webconf['pc_html'] : $this->webconf['mobile_html'];
 		$terminal_path = ($terminal_path=='' || $terminal_path=='/') ? '' : $terminal_path.'/';
 		
-		$www = get_domain().'/index.php';
+		$www = get_domain();
 		
 		
 		$lists = M('classtype')->findAll($sql,' id asc ',null,$limit);
-		if(isset($_SESSION['terminal'])){
-			$classtypedata = $_SESSION['terminal']=='mobile' ? classTypeDataMobile() : classTypeData();
-		}else{
-			$classtypedata = (isMobile() && $webconf['iswap']==1)?classTypeDataMobile():classTypeData();
-		}
-		foreach($classtypedata as $k=>$v){
-			$classtypedata[$k]['children'] = get_children($v,$classtypedata);
-		}
+		
+		$classtypedata = $this->classtypedata;
+
 		$urls = [];
 		if($lists){
 			//更新静态注意事项：
@@ -1126,7 +1177,7 @@ class IndexController extends CommonController
 		
 		
 		$lists = M($model)->findAll($sql,' id asc ',null,$limit);
-		$www = get_domain().'/index.php';
+		$www = get_domain();
 		$urls=[];//存储更新url链接
 		if($lists && is_array($lists)){
 			//更新静态注意事项：
@@ -1196,7 +1247,7 @@ class IndexController extends CommonController
 					$url = get_domain().'/'.$v['ownurl'];
 					$filename = APP_PATH.$terminal_path.$htmlurl;
 				}else{
-					$url = $www.'/'.$v['htmlurl'].'/'.$v['id'].'.html';
+					$url = gourl($v);
 					$filename = APP_PATH.$terminal_path.$v['htmlurl'].'/'.$v['id'].'.html';
 				}
 				$urls[] = ['url'=>$url,'html'=>$filename];
@@ -1244,6 +1295,7 @@ class IndexController extends CommonController
 			
 			
 			if(M('menu')->add($data)){
+				setCache('jznav',null);
 				JsonReturn(array('code'=>0,'msg'=>'添加成功！继续添加~','url'=>U('index/addmenu')));
 				exit;
 			}else{
@@ -1292,6 +1344,7 @@ class IndexController extends CommonController
 			
 			
 			if(M('menu')->update(['id'=>$id],$data)){
+				setCache('jznav',null);
 				JsonReturn(array('code'=>0,'msg'=>'修改成功！','url'=>U('index/menu')));
 				exit;
 			}else{
@@ -1311,6 +1364,7 @@ class IndexController extends CommonController
 		$id = $this->frparam('id');
 		if($id){
 			if(M('menu')->delete('id='.$id)){
+				setCache('jznav',null);
 				JsonReturn(array('code'=>0,'msg'=>'删除成功！'));
 			}else{
 				JsonReturn(array('code'=>1,'msg'=>'删除失败！'));

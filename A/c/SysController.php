@@ -85,21 +85,27 @@ class SysController extends CommonController
 			   } 
 		   }
 		   $config = include(APP_PATH.'Conf/config.php');
-		   if($this->frparam('isdebug')){
-		   		$config['APP_DEBUG'] = true;
-		   }else{
-		   		$config['APP_DEBUG'] = false;
+		   if(checkAction('Sys/high-level')){
+			   if($this->frparam('isdebug')){
+					$config['APP_DEBUG'] = true;
+			   }else{
+					$config['APP_DEBUG'] = false;
+			   }
+			   if($this->frparam('hideclasspath')){
+					$config['File_TXT_HIDE'] = true;
+			   }else{
+					$config['File_TXT_HIDE'] = false;
+			   }
 		   }
-		   if($this->frparam('hideclasspath')){
-		   		$config['File_TXT_HIDE'] = true;
-		   }else{
-		   		$config['File_TXT_HIDE'] = false;
-		   }
+		   
+		   
 		   $ress = file_put_contents(APP_PATH.'Conf/config.php', '<?php return ' . var_export($config, true) . '; ?>');
 
 		   if($this->webconf['pc_html']!=$this->frparam('pc_html',1) || $this->webconf['mobile_html']!=$this->frparam('mobile_html',1)){
 			   setCache('classtype',null);
 			   setCache('mobileclasstype',null);
+			   setCache('classtypedatamobile',null);
+			   setCache('classtypedatapc',null);
 		   }
 		   setCache('webconfig',null);
 		   setCache('customconfig',null);
@@ -165,6 +171,21 @@ class SysController extends CommonController
 			if(!$res){
 				JsonReturn(['code'=>0,'data'=>array(),'count'=>0]);
 			}
+			if($this->admin['isadmin']!=1){
+				$admins = M('level')->findAll(['gid'=>1]);
+				$ids = [];
+				foreach($admins as $v){
+					$ids[]=$v['id'];
+				}
+				$new = [];
+				foreach($res as $v){
+					if(!in_array($v['data']['id'],$ids)){
+						$new[]=$v;
+					}
+				}
+				$res = $new;
+			}
+			
 			rsort($res);
 			$page = new \ArrayPage($res);
 			
@@ -178,6 +199,7 @@ class SysController extends CommonController
 				$limit = 10;
 			}
 			$count = count($res);
+			
 			
 			$lists = $page->query(['page'=>$this->frparam('page',0,1)])->setPage(['limit'=>$limit])->go();
 			foreach($lists as $k=>$v){
@@ -358,28 +380,28 @@ class SysController extends CommonController
 			if(stripos($data['sqls'],'update')!==false || stripos($data['sqls'],'delete')!==false || stripos($data['sqls'],'insert')!==false || stripos($data['sqls'],'drop')!==false || stripos($data['sqls'],'truncate')!==false){
 				JsonReturn(array('code'=>1,'msg'=>'非法操作'));
 			}
-			
-			
-			if(M('cachedata')->add($data)){
-				$tid = $data['tid'] ? ($data['isall']==1 ? ' and tid in ('.implode(',',$this->classtypedata[$data['tid']]['children']['ids']).') ' : ' and tid='.$data['tid']) : '';
-				$sqls = $data['sqls'] ? ' and '.$data['sqls'] : '';
-				$orderby = $data['orders'] ? ' order by '.$data['orders'] : '';
-				$limit = $data['limits'] ? ' limit '.$data['limits'] : '';
-				if($tid || $sqls){
-					$where = ' where 1=1 '.$tid.htmlspecialchars_decode($sqls,ENT_QUOTES);
-				}else{
-					$where = '';
-				}
-				$sql = "select * from ".DB_PREFIX.$data['molds'].$where.$orderby.$limit;
-				$result = M()->findSql($sql);
-				if($result){
-					foreach($result as $k=>$v){
-						if(isset($v['htmlurl'])){
-							$result[$k]['url'] = gourl($v,$v['htmlurl']);
-						}
+			$tid = $data['tid'] ? ($data['isall']==1 ? ' and tid in ('.implode(',',$this->classtypedata[$data['tid']]['children']['ids']).') ' : ' and tid='.$data['tid']) : '';
+			$sqls = $data['sqls'] ? ' and '.$data['sqls'] : '';
+			$orderby = $data['orders'] ? ' order by '.$data['orders'] : '';
+			$limit = $data['limits'] ? ' limit '.$data['limits'] : '';
+			if($tid || $sqls){
+				$where = ' where 1=1 '.$tid.htmlspecialchars_decode($sqls,ENT_QUOTES);
+			}else{
+				$where = '';
+			}
+			$sql = "select * from ".DB_PREFIX.$data['molds'].$where.$orderby.$limit;
+			$result = M()->findSql($sql);
+			if($result){
+				foreach($result as $k=>$v){
+					if(isset($v['htmlurl'])){
+						$result[$k]['url'] = gourl($v,$v['htmlurl']);
 					}
 				}
-				$time = $data['times']*60+time();
+			}
+			
+			if(M('cachedata')->add($data)){
+				
+				$time = $data['times']*60;
 				setCache('jzcache_'.$data['field'],$result,$time);
 				
 				JsonReturn(array('code'=>0,'msg'=>'添加成功！继续添加~','url'=>U('sys/addcache')));
@@ -418,26 +440,27 @@ class SysController extends CommonController
 			if(stripos($data['sqls'],'update')!==false || stripos($data['sqls'],'delete')!==false || stripos($data['sqls'],'insert')!==false || stripos($data['sqls'],'drop')!==false || stripos($data['sqls'],'truncate')!==false){
 				JsonReturn(array('code'=>1,'msg'=>'非法操作'));
 			}
-			if(M('cachedata')->update(['id'=>$id],$data)){
-				$tid = $data['tid'] ? ($data['isall']==1 ? ' and tid in ('.implode(',',$this->classtypedata[$data['tid']]['children']['ids']).') ' : ' and tid='.$data['tid']) : '';
-				$sqls = $data['sqls'] ? ' and '.$data['sqls'] : '';
-				$orderby = $data['orders'] ? ' order by '.$data['orders'] : '';
-				$limit = $data['limits'] ? ' limit '.$data['limits'] : '';
-				if($tid || $sqls){
-					$where = ' where 1=1 '.$tid.htmlspecialchars_decode($sqls,ENT_QUOTES);
-				}else{
-					$where = '';
-				}
-				$sql = "select * from ".DB_PREFIX.$data['molds'].$where.$orderby.$limit;
-				$result = M()->findSql($sql);
-				if($result){
-					foreach($result as $k=>$v){
-						if(isset($v['htmlurl'])){
-							$result[$k]['url'] = gourl($v,$v['htmlurl']);
-						}
+			$tid = $data['tid'] ? ($data['isall']==1 ? ' and tid in ('.implode(',',$this->classtypedata[$data['tid']]['children']['ids']).') ' : ' and tid='.$data['tid']) : '';
+			$sqls = $data['sqls'] ? ' and '.$data['sqls'] : '';
+			$orderby = $data['orders'] ? ' order by '.$data['orders'] : '';
+			$limit = $data['limits'] ? ' limit '.$data['limits'] : '';
+			if($tid || $sqls){
+				$where = ' where 1=1 '.$tid.htmlspecialchars_decode($sqls,ENT_QUOTES);
+			}else{
+				$where = '';
+			}
+			$sql = "select * from ".DB_PREFIX.$data['molds'].$where.$orderby.$limit;
+			$result = M()->findSql($sql);
+			if($result){
+				foreach($result as $k=>$v){
+					if(isset($v['htmlurl'])){
+						$result[$k]['url'] = gourl($v,$v['htmlurl']);
 					}
 				}
-				$time = $data['times']*60+time();
+			}
+			if(M('cachedata')->update(['id'=>$id],$data)){
+				
+				$time = $data['times']*60;
 				setCache('jzcache_'.$data['field'],$result,$time);
 				JsonReturn(array('code'=>0,'msg'=>'修改成功！','url'=>U('sys/datacache')));
 				exit;
